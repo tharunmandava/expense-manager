@@ -10,15 +10,51 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+app.use(express.json())
 
-app.get("/api", async(req,res) =>{
+//routes 
+
+//get list from users
+app.get("/listusers", async(req,res) =>{
     try {
-        const list = await pool.query("SELECT * FROM users");
-        res.json(list.rows);
+        const data = await pool.query("SELECT * FROM users");
+        res.status(200).send(data.rows);
     } catch (error) {
-       console.log("error getting list",error); 
+       console.log("error getting list-users",error); 
     }
 });
+
+//insert into table users
+app.post("/createuser", async(req,res) =>{
+    try {
+        await pool.query("INSERT INTO users(name) VALUES($1)",[req.body.name]);
+        res.status(200).send({message:"user created"});
+   
+    } catch (error) {
+        console.log(error);        
+        res.sendStatus(500);
+    }
+})
+
+//list expenses
+app.get("/listexpenses", async(req,res) =>{
+    try {
+       const data = await pool.query("SELECT * FROM expenses"); 
+       res.status(200).send(data.rows);
+    } catch (error) {
+       console.log("error getting list-expenses",error); 
+    }
+})
+
+app.post("/createexpense", async(req,res) =>{
+    try {
+        
+    } catch (error) {
+        
+    }
+})
+    
+
 
 app.listen(5000,() => {
     console.log("server started!");
