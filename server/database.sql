@@ -55,3 +55,4 @@ SELECT e.expense_id, e.amount, e.expense_date FROM expenses e JOIN expense_parti
 SELECT expense_id, amount, expense_date FROM expenses WHERE paid_by = 1;
 
 */
+
