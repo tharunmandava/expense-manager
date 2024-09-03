@@ -32,6 +32,11 @@ const Navbar = () => {
                 >Home</NavLink
               >
               <NavLink
+                to="/createuser"
+                className={linkClass}
+                >Create</NavLink
+              >
+              <NavLink
                 to="/manage"
                 className={linkClass}
                 >Manage</NavLink
