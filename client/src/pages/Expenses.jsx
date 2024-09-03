@@ -8,7 +8,8 @@ const Expenses = () => {
   // Fetch expenses data from the API
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get("https://66d5d955f5859a704267a78f.mockapi.io/api/expenses");
+      const response = await axios.get("https://g2m4e.wiremockapi.cloud/api/list-expenses");
+      console.log(response.data)
       setExpenses(response.data);
     } catch (error) {
       console.error("Error fetching expenses:", error);
@@ -33,9 +34,9 @@ const Expenses = () => {
           <li key={expense.id} className="border p-4 mb-2 rounded">
             <h2 className="text-lg font-semibold">{expense.paid_by}</h2>
             <p>Amount: ${expense.amount}</p>
-            <p>Date: {new Date(expense.expense_date * 1000).toLocaleDateString()}</p>
+            <p>Date: {expense.expense_date.slice(0, 10)}</p>
             <NavLink
-              to={`/manage/expenses/${expense.expenses_id}`}
+              to={`/manage/expenses/${expense.expense_id}`}
               className="text-indigo-600 hover:text-indigo-800"
             >
               View Details
