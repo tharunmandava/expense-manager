@@ -41,4 +41,3 @@ const ExpenseDetails = () => {
 };
 
 export default ExpenseDetails;
-//test
