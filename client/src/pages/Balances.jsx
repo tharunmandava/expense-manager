@@ -1,7 +1,15 @@
 const Balances = () => {
+
+  const test = () => {
+    const storedData = localStorage.getItem("users");
+    if (storedData) {
+      console.log(JSON.parse(storedData));
+    }
+  }
+
   return (
     <>
-      <h1>Balances</h1>
+    <button onClick={test}>localstorage</button>
     </>
   )
 }
