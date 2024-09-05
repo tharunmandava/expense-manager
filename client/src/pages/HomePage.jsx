@@ -5,11 +5,11 @@ const HomePage = () => {
   const  [users,setUsers] = useState([]);
 
   const fetchAPI = async () => {
-    const response = await axios.get("https://66d5d955f5859a704267a78f.mockapi.io/api/users");
-    console.log(response.data[0].name);
-    setUsers(response.data[0].name);
+    const response = await axios.get("https://g2m4e.wiremockapi.cloud/api/user/3");
+    console.log(response);
+    setUsers(response.data.name);
   };
-  
+
   useEffect(() => {
     fetchAPI();
   },[])
