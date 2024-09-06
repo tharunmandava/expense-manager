@@ -1,15 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
-const cors = require('cors');
-const corsOptions = {
-    origin: ["http://localhost:5173"],
-};
 
-router.use(cors(corsOptions));
-
-
-router.get('/list-all', async (req, res) => {
+//list all of the expenses
+router.get('/', async (req, res) => {
     try {
         const data = await pool.query("SELECT * FROM expenses");
         res.status(200).send(data.rows);
@@ -18,6 +12,7 @@ router.get('/list-all', async (req, res) => {
     }
 });
 
+//list all of the expenses paid by a user
 router.get('/list-by-user/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -27,6 +22,7 @@ router.get('/list-by-user/:id', async (req, res) => {
     }
 });
 
+//get a specific expense
 router.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -35,12 +31,41 @@ router.get('/:id', async (req, res) => {
         const user_names = data2.rows.map(row => row.user_name);
         const obj = {
             transaction: data.rows[0],
-            participants: user_names     // Array of users
+            participants: user_names     
         };
         res.status(200).send(obj);
     } catch (error) {
         res.status(500).send(error);
     }
 });
+
+//create an expense
+router.post('/create-expense', async (req, res) => {
+    const {amount,paid_by,group_id,participants} = req.body;
+    try {
+        await pool.query("BEGIN");
+
+        const insertExpenseQuery = `INSERT INTO expenses(amount, paid_by, group_id) VALUES ($1, $2, $3) RETURNING expense_id`;
+        const { rows } = await pool.query(insertExpenseQuery, [amount, paid_by, group_id]);
+        const expense_id = rows[0].expense_id;
+    
+        const values = participants.map((_, index) => `($1, $${index + 2})`).join(', ');
+        const params = [expense_id, ...participants]; 
+    
+        const insertParticipantsQuery = `INSERT INTO expense_participants (expense_id, user_id) VALUES ${values}`;
+    
+        await pool.query(insertParticipantsQuery, params);
+    
+        await pool.query("COMMIT"); 
+
+       res.status(201).json({message:"Expense created successfully",id:expense_id});
+
+    } catch (error) {
+        await pool.query('ROLLBACK');    
+        console.log("theres an error!",error);
+        res.status(500).send('Error creating expense');
+    }
+});
+
 
 module.exports = router;
