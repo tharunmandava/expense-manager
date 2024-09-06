@@ -13,10 +13,10 @@ const Expenses = () => {
 
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get(`${API_URL}/list-expenses`);
+      const response = await axios.get(`${API_URL}/expenses/list-all`);
       setExpenses(response.data);
     } catch (error) {
-      console.error("Error fetching expenses:", error);
+      console.error("Error fetching expenses:");
     }
   };
 
@@ -48,7 +48,7 @@ const Expenses = () => {
             <p>Amount: ${expense.amount}</p>
             <p>Date: {expense.expense_date.slice(0, 10)}</p>
             <NavLink
-              to={`/manage/expenses/${expense.expense_id}`}
+              to={`/manage/expenses/${expenses.expense_id}`}
               className="text-indigo-600 hover:text-indigo-800"
             >
               View Details
