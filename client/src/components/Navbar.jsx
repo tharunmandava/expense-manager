@@ -34,12 +34,12 @@ const Navbar = () => {
               <NavLink
                 to="/createuser"
                 className={linkClass}
-                >Create</NavLink
+                >Create User</NavLink
               >
               <NavLink
-                to="/manage"
+                to="/groups"
                 className={linkClass}
-                >Manage</NavLink
+                >Groups</NavLink
               >
               <NavLink
                 to="/filler"
