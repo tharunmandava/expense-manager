@@ -48,7 +48,7 @@ const Expenses = () => {
             <p>Amount: ${expense.amount}</p>
             <p>Date: {expense.expense_date.slice(0, 10)}</p>
             <NavLink
-              to={`/manage/expense/${expense.expense_id}`}
+              to={`/manage/expenses/${expense.expense_id}`}
               className="text-indigo-600 hover:text-indigo-800"
             >
               View Details

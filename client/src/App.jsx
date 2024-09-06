@@ -19,7 +19,7 @@ function App() {
         
         <Route path="manage" element={<ManageLayout />}>
           <Route path="expenses" element={<Expenses />} />
-          <Route path="expense/:id" element={<ExpenseDetails />} />
+          <Route path="expenses/:id" element={<ExpenseDetails />} />
           <Route path="expenses/add" element={<AddExpense />} />
           <Route path="balances" element={<Balances />} />
           <Route path="more" element={<More />} />
