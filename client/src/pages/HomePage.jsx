@@ -3,9 +3,10 @@ import { useState,useEffect } from "react";
 
 const HomePage = () => {
   const  [users,setUsers] = useState([]);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const fetchAPI = async () => {
-    const response = await axios.get("https://g2m4e.wiremockapi.cloud/api/user/3");
+    const response = await axios.get(`${API_URL}/user/3`);
     console.log(response);
     setUsers(response.data.name);
   };

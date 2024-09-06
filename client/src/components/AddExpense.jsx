@@ -7,11 +7,12 @@ const AddExpense = () => {
   const [amount, setAmount] = useState("");
   const [expenseDate, setExpenseDate] = useState("");
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("https://66d5d955f5859a704267a78f.mockapi.io/api/expenses", {
+      await axios.post(`${API_URL}/expenses`, {
         paid_by: paidBy,
         amount: Number(amount),
         expense_date: Math.floor(new Date(expenseDate).getTime() / 1000), 

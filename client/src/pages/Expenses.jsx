@@ -1,15 +1,19 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { NavLink } from "react-router-dom";
 
 const Expenses = () => {
   const [expenses, setExpenses] = useState([]);
+  const API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch expenses data from the API
+  const users = useMemo(() => {
+    const storedUsers = localStorage.getItem("users");
+    return storedUsers ? JSON.parse(storedUsers) : [];
+  }, []);
+
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get("https://g2m4e.wiremockapi.cloud/api/list-expenses");
-      console.log(response.data)
+      const response = await axios.get(`${API_URL}/list-expenses`);
       setExpenses(response.data);
     } catch (error) {
       console.error("Error fetching expenses:", error);
@@ -19,6 +23,12 @@ const Expenses = () => {
   useEffect(() => {
     fetchExpenses();
   }, []);
+
+  const getUserName = (userId) => {
+    console.log(users);
+    const user = users.find((user) => user.user_id === userId);
+    return user ? user.name : "Unknown";
+  };
 
   return (
     <div className="p-4">
@@ -31,12 +41,14 @@ const Expenses = () => {
       </NavLink>
       <ul className="mt-4">
         {expenses.map((expense) => (
-          <li key={expense.id} className="border p-4 mb-2 rounded">
-            <h2 className="text-lg font-semibold">{expense.paid_by}</h2>
+          <li key={expense.expense_id} className="border p-4 mb-2 rounded">
+            <h2 className="text-lg font-semibold">
+              Paid by: {getUserName(expense.paid_by)}
+            </h2>
             <p>Amount: ${expense.amount}</p>
             <p>Date: {expense.expense_date.slice(0, 10)}</p>
             <NavLink
-              to={`/manage/expenses/${expense.expense_id}`}
+              to={`/manage/expense/${expense.expense_id}`}
               className="text-indigo-600 hover:text-indigo-800"
             >
               View Details

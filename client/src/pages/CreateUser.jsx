@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const CreateUser = () => {
   const [name, setName] = useState("");
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleInputChange = (e) => {
     setName(e.target.value);
@@ -13,7 +14,7 @@ const CreateUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://66d5d955f5859a704267a78f.mockapi.io/api/users", {
+      const response = await axios.post(`${API_URL}/users`, {
         name: name,
       });
       toast.success(`User ${response.data.name} has been created`);

@@ -1,11 +1,12 @@
-#create a table users with user_id name(unique)
-
 CREATE TABLE users (
     user_id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL
 );
 
-#create a table expenses with expense id, paid by, amount and expense date and add a paid for field with a foreign key to users
+CREATE TABLE groups (
+    group_id BIGSERIAL PRIMARY KEY,
+    group_name VARCHAR(255) UNIQUE NOT NULL
+);
 
 CREATE TABLE expenses (
     expense_id BIGSERIAL PRIMARY KEY,
@@ -28,11 +29,6 @@ CREATE TABLE expense_participants (
     PRIMARY KEY (expense_id, user_id),
     FOREIGN KEY (expense_id) REFERENCES expenses(expense_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-);
-
-CREATE TABLE groups (
-    group_id BIGSERIAL PRIMARY KEY,
-    group_name VARCHAR(255) UNIQUE NOT NULL
 );
 
 CREATE TABLE group_members (

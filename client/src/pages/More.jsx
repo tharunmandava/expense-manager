@@ -1,13 +1,12 @@
 import axios from "axios";
-import {useState, useEffect} from "react";
 
 const More = () => {
-
-  const [users, setUsers] = useState([]);
+  
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const fetchusers = async () =>{
     try {
-     const res = await axios.get("http://localhost:5000/api/users/list-all") 
+     const res = await axios.get(`${API_URL}/users/list-all`) 
      const res_json = JSON.stringify(res.data);
      localStorage.setItem("users", res_json);
      console.log("running fetch users!")
