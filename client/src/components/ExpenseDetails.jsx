@@ -6,28 +6,43 @@ const ExpenseDetails = () => {
   const { id } = useParams();
   const [expense, setExpense] = useState(null);
   const API_URL = import.meta.env.VITE_API_URL;
+  const [users, setUsers] = useState(JSON.parse(localStorage.getItem("users")));
+
+  const fetchUsername = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/users/`);
+      localStorage.setItem("users", JSON.stringify(res.data));
+      setUsers(res.data);
+    } catch (error) {
+      console.error("Error fetching usernames: ", error)
+    }
+  }
 
   // Fetch expense data based on the ID
   const fetchExpense = async () => {
     try {
-      const response = await axios.get(`${API_URL}/expense/${id}`);
+      const response = await axios.get(`${API_URL}/expenses/${id}`);
       setExpense(response.data);
     } catch (error) {
       console.error("Error fetching expense details:", error);
     }
   };
-
+/*
   const users = useMemo(() => {
     const storedUsers = localStorage.getItem("users");
+    console.log(storedUsers)
     return storedUsers ? JSON.parse(storedUsers) : [];
   }, []);
-
+*/
   const getUserName = (userId) => {
-    const user = users.find((user) => user.user_id === userId);
-    return user ? user.name : `Unknown`;
+    const user = users.filter(user => {return user.user_id === userId.toString()});
+    return user.length === 1 ? user[0].name : `Unknown`;
   };
 
   useEffect(() => {
+    if (users == null) {
+      const users = fetchUsername();
+    }
     fetchExpense();
   }, [id]);
 
@@ -44,8 +59,8 @@ const ExpenseDetails = () => {
       <p><strong>Expenses ID:</strong> {expense.transaction.expense_id}</p>
       <p><strong>User ID:</strong> {expense.transaction.userId}</p>
       <p><strong>Participants:</strong> {expense.participants.map((participant, index) => (
-        <span key={participant.user_id}>
-          {getUserName(participant.user_id)}{index < expense.participants.length - 1 ? ", " : ""}
+        <span key={participant}>
+          {getUserName(participant)}{index < expense.participants.length - 1 ? ", " : ""}
         </span>
       ))}</p>
     </div>

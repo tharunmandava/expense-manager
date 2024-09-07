@@ -13,7 +13,7 @@ const Expenses = () => {
 
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get(`${API_URL}/expenses/list-all`);
+      const response = await axios.get(`${API_URL}/expenses/`);
       setExpenses(response.data);
     } catch (error) {
       console.error("Error fetching expenses:");
@@ -43,12 +43,12 @@ const Expenses = () => {
         {expenses.map((expense) => (
           <li key={expense.expense_id} className="border p-4 mb-2 rounded">
             <h2 className="text-lg font-semibold">
-              Paid by: {getUserName(expense.paid_by)}
+              Expense ID: {expense.expense_id}
             </h2>
             <p>Amount: ${expense.amount}</p>
             <p>Date: {expense.expense_date.slice(0, 10)}</p>
             <NavLink
-              to={`/manage/expenses/${expenses.expense_id}`}
+              to={`/manage/expenses/${expense.expense_id}`}
               className="text-indigo-600 hover:text-indigo-800"
             >
               View Details
