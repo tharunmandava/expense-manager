@@ -9,6 +9,8 @@ import Filler from './pages/Filler';
 import CreateUser from './pages/CreateUser';
 import ExpenseDetails from './components/ExpenseDetails';
 import AddExpense from './components/AddExpense';
+import CreateGroup from './components/CreateGroup';
+import Groups from './pages/Groups';
 
 function App() {
   const router = createBrowserRouter(
@@ -16,14 +18,13 @@ function App() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<HomePage />} />
         <Route path="createuser" element={<CreateUser />} />
-        
-        <Route path="manage" element={<ManageLayout />}>
-          <Route path="expenses" element={<Expenses />} />
-          <Route path="expenses/:id" element={<ExpenseDetails />} />
-          <Route path="expenses/add" element={<AddExpense />} />
-          <Route path="balances" element={<Balances />} />
-          <Route path="more" element={<More />} />
-        </Route>
+        <Route path="groups" element={<Groups />} />
+        <Route path="groups/create" element={<CreateGroup />} />
+        <Route path="expenses" element={<Expenses />} />
+        <Route path="expenses/:id" element={<ExpenseDetails />} />
+        <Route path="expenses/add" element={<AddExpense />} />
+        <Route path="balances" element={<Balances />} />
+        <Route path="more" element={<More />} />
 
         <Route path='filler' element={<Filler />} />
 
