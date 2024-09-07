@@ -13,8 +13,9 @@ const Expenses = () => {
 
   const fetchExpenses = async () => {
     try {
-      const response = await axios.get(`${API_URL}/expenses/list-all`);
+      const response = await axios.get(`${API_URL}/expenses`);
       setExpenses(response.data);
+      console.log(response.data)
     } catch (error) {
       console.error("Error fetching expenses:");
     }
@@ -25,7 +26,6 @@ const Expenses = () => {
   }, []);
 
   const getUserName = (userId) => {
-    console.log(users);
     const user = users.find((user) => user.user_id === userId);
     return user ? user.name : "Unknown";
   };

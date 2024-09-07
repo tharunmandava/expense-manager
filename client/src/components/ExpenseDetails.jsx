@@ -10,7 +10,7 @@ const ExpenseDetails = () => {
   // Fetch expense data based on the ID
   const fetchExpense = async () => {
     try {
-      const response = await axios.get(`${API_URL}/expense/${id}`);
+      const response = await axios.get(`${API_URL}/expenses/${id}`);
       setExpense(response.data);
     } catch (error) {
       console.error("Error fetching expense details:", error);

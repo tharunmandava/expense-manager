@@ -1,36 +1,38 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 
 const ManageNavBar = () => {
+  const { id } = useParams(); // Get the group ID from the URL params
+
   return (
-    <nav style={styles.navbar}>
-      <ul style={styles.navList}>
-        <li style={styles.navItem}>
+    <nav className="bg-gray-800 p-4">
+      <ul className="flex justify-center gap-8 list-none m-0 p-0">
+        <li>
           <NavLink
-            to="/manage/expenses"
-            style={({ isActive }) => ({
-              color: isActive ? 'gold' : 'white',
-            })}
+            to={`/groups/${id}/expenses`}
+            className={({ isActive }) =>
+              isActive ? 'text-gold' : 'text-white'
+            }
           >
             Expenses
           </NavLink>
         </li>
-        <li style={styles.navItem}>
+        <li>
           <NavLink
-            to="/manage/balances"
-            style={({ isActive }) => ({
-              color: isActive ? 'gold' : 'white',
-            })}
+            to={`/groups/${id}/balances`}
+            className={({ isActive }) =>
+              isActive ? 'text-gold' : 'text-white'
+            }
           >
             Balances
           </NavLink>
         </li>
-        <li style={styles.navItem}>
+        <li>
           <NavLink
-            to="/manage/more"
-            style={({ isActive }) => ({
-              color: isActive ? 'gold' : 'white',
-            })}
+            to={`/groups/${id}/more`}
+            className={({ isActive }) =>
+              isActive ? 'text-gold' : 'text-white'
+            }
           >
             More
           </NavLink>
@@ -38,26 +40,6 @@ const ManageNavBar = () => {
       </ul>
     </nav>
   );
-};
-
-const styles = {
-  navbar: {
-    display: 'flex',
-    justifyContent: 'center',
-    background: '#333',
-    padding: '1rem',
-  },
-  navList: {
-    listStyleType: 'none',
-    display: 'flex',
-    gap: '2rem',
-    padding: 0,
-    margin: 0,
-  },
-  navItem: {
-    color: '#fff',
-    textDecoration: 'none',
-  },
 };
 
 export default ManageNavBar;
