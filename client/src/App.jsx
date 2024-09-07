@@ -20,22 +20,22 @@ function App() {
         <Route path="createuser" element={<CreateUser />} />
         <Route path="groups" element={<Groups />} />
         <Route path="groups/create" element={<CreateGroup />} />
-        <Route path="expenses" element={<Expenses />} />
-        <Route path="expenses/:id" element={<ExpenseDetails />} />
-        <Route path="expenses/add" element={<AddExpense />} />
-        <Route path="balances" element={<Balances />} />
-        <Route path="more" element={<More />} />
 
-        <Route path='filler' element={<Filler />} />
+        {/* Group-specific routes */}
+        <Route path="groups/:id" element={<ManageLayout />}>
+          <Route path="expenses" element={<Expenses />} />
+          <Route path="expenses/add" element={<AddExpense />} />
+          <Route path="expenses/:expenseId" element={<ExpenseDetails />} />
+          <Route path="balances" element={<Balances />} />
+          <Route path="more" element={<More />} />
+        </Route>
 
+        <Route path="filler" element={<Filler />} />
       </Route>
     )
   );
+
   return <RouterProvider router={router} />;
-
 }
-
-
-
 
 export default App;
