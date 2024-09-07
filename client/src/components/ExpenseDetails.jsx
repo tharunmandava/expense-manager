@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 
 const ExpenseDetails = () => {
-  const { id } = useParams();
+  const { expenseId } = useParams();
   const [expense, setExpense] = useState(null);
   const API_URL = import.meta.env.VITE_API_URL;
   const [users, setUsers] = useState(JSON.parse(localStorage.getItem("users")));
@@ -21,7 +21,7 @@ const ExpenseDetails = () => {
   // Fetch expense data based on the ID
   const fetchExpense = async () => {
     try {
-      const response = await axios.get(`${API_URL}/expenses/${id}`);
+      const response = await axios.get(`${API_URL}/expenses/${expenseId}`);
       setExpense(response.data);
     } catch (error) {
       console.error("Error fetching expense details:", error);
@@ -44,7 +44,7 @@ const ExpenseDetails = () => {
       const users = fetchUsername();
     }
     fetchExpense();
-  }, [id]);
+  }, [expenseId]);
 
   if (!expense) {
     return <div>Loading...</div>;

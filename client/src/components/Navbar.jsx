@@ -31,11 +31,7 @@ const Navbar = () => {
                 className={linkClass}
                 >Home</NavLink
               >
-              <NavLink
-                to="/createuser"
-                className={linkClass}
-                >Create User</NavLink
-              >
+              
               <NavLink
                 to="/groups"
                 className={linkClass}

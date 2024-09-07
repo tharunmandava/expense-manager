@@ -6,7 +6,6 @@ import Expenses from './pages/Expenses';
 import Balances from './pages/Balances';
 import More from './pages/More';
 import Filler from './pages/Filler';
-import CreateUser from './pages/CreateUser';
 import ExpenseDetails from './components/ExpenseDetails';
 import AddExpense from './components/AddExpense';
 import CreateGroup from './components/CreateGroup';
@@ -17,7 +16,6 @@ function App() {
     createRoutesFromElements(
       <Route path="/" element={<MainLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="createuser" element={<CreateUser />} />
         <Route path="groups" element={<Groups />} />
         <Route path="groups/create" element={<CreateGroup />} />
 

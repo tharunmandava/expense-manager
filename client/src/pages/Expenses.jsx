@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useState, useEffect, useMemo } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 
 const Expenses = () => {
   const [expenses, setExpenses] = useState([]);
   const API_URL = import.meta.env.VITE_API_URL;
+  const { id } = useParams();
 
   const users = useMemo(() => {
     const storedUsers = localStorage.getItem("users");
@@ -16,7 +17,7 @@ const Expenses = () => {
       const response = await axios.get(`${API_URL}/expenses/`);
       setExpenses(response.data);
     } catch (error) {
-      console.error("Error fetching expenses:");
+      console.error("Error fetching expenses:", error);
     }
   };
 
@@ -25,7 +26,6 @@ const Expenses = () => {
   }, []);
 
   const getUserName = (userId) => {
-    console.log(users);
     const user = users.find((user) => user.user_id === userId);
     return user ? user.name : "Unknown";
   };
@@ -34,7 +34,7 @@ const Expenses = () => {
     <div className="p-4">
       <h1 className="text-2xl font-bold">Expenses</h1>
       <NavLink
-        to="/manage/expenses/add"
+        to={`/groups/${id}/expenses/add`}
         className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-4"
       >
         + Add Expense
@@ -48,7 +48,7 @@ const Expenses = () => {
             <p>Amount: ${expense.amount}</p>
             <p>Date: {expense.expense_date.slice(0, 10)}</p>
             <NavLink
-              to={`/manage/expenses/${expense.expense_id}`}
+              to={`/groups/${id}/expenses/${expense.expense_id}`}
               className="text-indigo-600 hover:text-indigo-800"
             >
               View Details
