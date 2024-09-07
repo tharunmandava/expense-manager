@@ -27,11 +27,11 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     try {
         const data = await pool.query("SELECT * FROM expenses WHERE expense_id = $1", [id]);
-        const data2 = await pool.query("SELECT ep.expense_id, u.name AS user_name FROM expense_participants ep JOIN users u ON ep.user_id = u.user_id WHERE ep.expense_id = $1;", [id]);
-        const user_names = data2.rows.map(row => row.user_name);
+        const data2 = await pool.query("SELECT ep.expense_id, u.user_id FROM expense_participants ep JOIN users u ON ep.user_id = u.user_id WHERE ep.expense_id = $1;", [id]);
+        const user_ids = data2.rows.map(row => row.user_id);
         const obj = {
             transaction: data.rows[0],
-            participants: user_names     
+            participants: user_ids    
         };
         res.status(200).send(obj);
     } catch (error) {
