@@ -1,7 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../db');
+const crypto = require('crypto');
 
+genUUID = () => {
+    const buffer = crypto.randomBytes(16);
+    const base64 = buffer.toString('base64');
+    const urlEncoded = base64
+        .replace(/\+/g, '-') 
+        .replace(/\//g, '_') 
+        .replace(/=+$/, ''); 
+
+    return urlEncoded;
+}
 
 //list all of the groups
 router.get('/', async (req, res) => {
@@ -27,25 +38,33 @@ router.get('/:id', async (req,res) => {
 //create a group
 
 router.post('/create-group', async (req, res) => {
-    const {name,members} = req.body;
+    const {group_name,group_currency,group_description,members} = req.body;
+    const group_id = genUUID();
+
+    if (!group_name || !members || !Array.isArray(members)) {
+        return res.status(400).json({ error: 'Invalid input' });
+    }
+
     try {
         await pool.query("BEGIN");
-        const insertGroupQuery = `INSERT INTO groups(group_name) VALUES ($1) RETURNING group_id`;
-        const { rows } = await pool.query(insertGroupQuery, [name]);
-        const group_id = rows[0].group_id;
-        const values = members.map((_,index) => `($1, $${index + 2})`).join(', ');
-        const params = [group_id, ...members];
-        const insertParticipantsQuery = `INSERT INTO group_members (group_id, user_id) VALUES ${values}`;
-        await pool.query(insertParticipantsQuery, params);
-        await pool.query("COMMIT");
-        res.status(201).json({message:"Group created successfully",id:group_id});
-        
 
+        const insertGroupQuery = `INSERT INTO groups(group_id, group_name, group_currency, group_description) VALUES ($1, $2, $3, $4)`;
+
+        await pool.query(insertGroupQuery, [group_id, group_name, group_currency, group_description]);
+
+        for(const member of members){
+            const insertMemberQuery = `INSERT INTO group_members (group_id, user_name) VALUES ($1, $2)`;
+            await pool.query(insertMemberQuery, [group_id, member]);
+        };
+
+        await pool.query("COMMIT");
+
+        res.status(201).json({ message: "Group created successfully", id: group_id });
+        
     } catch (error) {
         await pool.query('ROLLBACK');
         console.log("theres an error!",error);
         res.status(500).send('Error creating group');
-        
     }
 });
 
