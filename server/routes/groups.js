@@ -36,7 +36,6 @@ router.get('/:id', async (req,res) => {
 });
 
 //create a group
-
 router.post('/create-group', async (req, res) => {
     const {group_name,group_currency,group_description,members} = req.body;
     const group_id = genUUID();
@@ -65,6 +64,24 @@ router.post('/create-group', async (req, res) => {
         await pool.query('ROLLBACK');
         console.log("theres an error!",error);
         res.status(500).send('Error creating group');
+    }
+});
+
+//delete group
+router.delete('/:id', async (req,res) => {
+    const {id} = req.params;
+    try {
+       await pool.query("BEGIN"); 
+       const deleteGroupQuery = `DELETE FROM GROUPS WHERE group_id = $1`;
+       
+       await pool.query(deleteGroupQuery,[id]);
+
+       await pool.query("COMMIT");
+
+       res.status(201).json({message: 'group deleted successfully!'})
+    } catch (error) {
+       await pool.query('ROLLBACK'); 
+       res.status(500).json({message: 'error deleting group'});
     }
 });
 
