@@ -80,7 +80,7 @@ router.delete('/:id', async (req,res) => {
 })
 
 //create an expense
-router.post('/create', async (req, res) => {
+router.post('/', async (req, res) => {
     const {amount,paid_by,group_id,participants} = req.body;
 
     if (typeof amount !== 'number' || typeof paid_by !== 'number' || typeof group_id !== 'string' || !Array.isArray(participants)){

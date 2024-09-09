@@ -36,7 +36,7 @@ router.get('/:id', async (req,res) => {
 });
 
 //create a group
-router.post('/create-group', async (req, res) => {
+router.post('/', async (req, res) => {
     const {group_name,group_currency,group_description,members} = req.body;
     const group_id = genUUID();
 
