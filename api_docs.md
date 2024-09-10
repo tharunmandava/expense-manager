@@ -43,24 +43,28 @@ Uses node-postgres under the hood to connect to the database.
 
 ## Expenses
 
-### Create an expense
-`POST /api/expenses/create`
+### Create an expense with participants
+`POST /api/expenses/`
 
-#### Request
+#### Request Body
+
 ```json
 {
     "amount": 100,
     "paid_by": 9,
     "group_id": "QJGyxeNxuql4mmaMCiSCbw",
-    "participants": [9,10]
+    "participantAmounts": {
+        "9": -100,
+        "10": 100
+    }
 }
 ```
 
-#### Response
+#### Response Body
 ```json
 {
-    "message": "Expense created successfully",
-    "id": 1
+  "message": "Expense created successfully",
+  "id": "9"
 }
 ```
 

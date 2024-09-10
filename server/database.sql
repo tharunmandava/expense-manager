@@ -20,6 +20,7 @@ CREATE TABLE expenses (
     amount DECIMAL(10, 2) NOT NULL,
     expense_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     group_id VARCHAR(22) NOT NULL,
+    description TEXT,
     FOREIGN KEY (paid_by) REFERENCES group_members(user_id) ON DELETE CASCADE,
     FOREIGN KEY (group_id) REFERENCES groups(group_id) ON DELETE CASCADE
 );
@@ -27,6 +28,7 @@ CREATE TABLE expenses (
 CREATE TABLE expense_participants (
     expense_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
+    amount DECIMAL(10, 2) DEFAULT 0.00,
     PRIMARY KEY (expense_id, user_id),
     FOREIGN KEY (expense_id) REFERENCES expenses(expense_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES group_members(user_id) ON DELETE CASCADE

@@ -28,7 +28,7 @@ const CreateGroup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${API_URL}/groups/create-group`, {
+      const response = await axios.post(`${API_URL}/groups/`, {
         group_name: name,
         group_currency: currency,
         group_description: description,

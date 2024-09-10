@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
 });
 
 //list all of the expenses from a group
-router.get('/list-by-group/:id', async (req, res) => {
+router.get('/by-group/:id', async (req, res) => {
     const { id } = req.params;
     try {
        await pool.query("BEGIN"); 
@@ -37,13 +37,13 @@ router.get('/:id', async (req, res) => {
        await pool.query("BEGIN"); 
 
        const expenseQuery = `SELECT * FROM expenses WHERE expense_id = $1`;
-       const participantsQuery = `SELECT * FROM expense_participants where expense_id = $1`;
+       const participantsQuery = `SELECT user_id,amount FROM expense_participants where expense_id = $1`;
 
        const {rows : res1} = await pool.query(participantsQuery,[id]);
 
        const { rows : res2} = await pool.query(expenseQuery,[id]);
        const expense = res2[0];
-       expense_participants = res1[0];
+       const expense_participants = res1;
 
        res.status(200).send({expense,expense_participants});
 
@@ -81,11 +81,7 @@ router.delete('/:id', async (req,res) => {
 
 //create an expense
 router.post('/', async (req, res) => {
-    const {amount,paid_by,group_id,participants} = req.body;
-
-    if (typeof amount !== 'number' || typeof paid_by !== 'number' || typeof group_id !== 'string' || !Array.isArray(participants)){
-        return res.status(400).json({error : 'invalid input!'});
-    }
+    const { amount,paid_by,group_id,participantAmounts } = req.body;
 
     try {
 
@@ -95,12 +91,13 @@ router.post('/', async (req, res) => {
         const { rows } = await pool.query(createExpenseQuery,[paid_by,amount,group_id])
         const expense_id = rows[0].expense_id;
 
-        for(let i = 0; i < participants.length;i++){
-            const participant = participants[i]; 
-            const inserParticipantQuery = `INSERT INTO expense_participants(expense_id,user_id) VALUES ($1,$2)`;
+        for(const user_id in participantAmounts){
+            const participantAmount = participantAmounts[user_id];
+            
+            const insertParticipantQuery = `INSERT INTO expense_participants(expense_id,user_id,amount) VALUES ($1,$2,$3)`;
 
-            await pool.query(inserParticipantQuery,[expense_id,participant]);
-        };
+            await pool.query(insertParticipantQuery,[expense_id,user_id,participantAmount]);
+        } 
 
         await pool.query('COMMIT');
         res.status(201).json({message:"Expense created successfully",id:expense_id});
