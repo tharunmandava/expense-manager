@@ -24,6 +24,25 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/users/:id', async (req, res) => {
+    const {id} = req.params;
+    try {
+
+        const getUsers = `SELECT user_id,user_name FROM group_members WHERE group_id = $1`;
+
+        const { rows } = await pool.query(getUsers,[id]);
+
+        const result = rows;
+
+       res.status(200).send(result);
+
+    } catch (error) {
+        res.status(500).json({message: 'error getting data', error: error});
+    }
+});
+
+
+
 //get a specific group
 router.get('/:id', async (req,res) => {
     const {id} = req.params;

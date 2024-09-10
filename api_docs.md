@@ -63,6 +63,30 @@ Uses node-postgres under the hood to connect to the database.
 }
 ```
 
+### Get members of a group
+`GET /api/groups/users/:id`
+
+#### Request Body
+```json
+{
+    id: "e9a3b6c4-b4d4-4e1f-a4c2-d0b2b1c3d4e5"
+}
+```
+
+#### Response
+```json
+[
+    {
+        "user_id": "9",
+        "user_name": "John Doe"
+    },
+    {
+        "user_id": "10",
+        "user_name": "Jane Doe"
+    }
+]
+```
+
 ## Expenses
 
 ### Create an expense with participants
@@ -105,6 +129,28 @@ Uses node-postgres under the hood to connect to the database.
 {
     "message": "expense deleted successfully"
 }
+```
+
+### List expense by id
+`GET /api/expenses/:id`
+
+#### Request Body
+```json
+{
+    id: "15"
+}
+```
+#### Response
+```json
+{
+    "expense_id": "15",
+    "paid_by": "10",
+    "amount": "200.00",
+    "expense_date": "2024-09-10T09:13:27.519Z",
+    "group_id": "QJGyxeNxuql4mmaMCiSCbw",
+    "description": null
+}
+```
 
 ### List expense by group
 `GET /api/expenses/by-group/:id`

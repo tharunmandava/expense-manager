@@ -4,7 +4,7 @@ const pool = require("./db");
 const cors = require('cors')
 const corsOptions = {
     origin: true,
-    methods: ["GET", "POST"],
+    methods: ['GET', 'POST', 'DELETE', 'PUT'],
     allowedHeaders: ["Content-Type", "Authorization"]
 };
 
