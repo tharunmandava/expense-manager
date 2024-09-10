@@ -1,25 +1,21 @@
-import axios from "axios";
-import { useState,useEffect } from "react";
+import React from 'react';
 
 const HomePage = () => {
-  const  [user,setUser] = useState([]);
-  const API_URL = import.meta.env.VITE_API_URL;
-
-  const fetchAPI = async () => {
-    const response = await axios.get(`${API_URL}/users/3`);
-    console.log(response);
-    setUser(response.data.name);
+  const handleClearLocalStorage = () => {
+    localStorage.clear();
+    alert('Local storage has been cleared.');
   };
 
-  useEffect(() => {
-    fetchAPI();
-  },[])
-
   return (
-    <h1 className="text-3xl font-bold underline">
-      Hello, {user}
-    </h1>
-  )
-}
+    <div className="p-4">
+      <button
+        onClick={handleClearLocalStorage}
+        className="bg-red-500 text-white font-semibold py-2 px-4 rounded hover:bg-red-600 transition-colors"
+      >
+        Clear Local Storage
+      </button>
+    </div>
+  );
+};
 
 export default HomePage;

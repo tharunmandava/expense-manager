@@ -23,7 +23,7 @@ function App() {
         <Route path="groups/:id" element={<ManageLayout />}>
           <Route path="expenses" element={<Expenses />} />
           <Route path="expenses/add" element={<AddExpense />} />
-          <Route path="expenses/:expenseId" element={<ExpenseDetails />} />
+          <Route path="expenses/:expenseId/edit" element={<ExpenseDetails />} />
           <Route path="balances" element={<Balances />} />
           <Route path="more" element={<More />} />
         </Route>
