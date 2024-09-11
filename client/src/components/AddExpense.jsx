@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import {Input} from 'antd';
 
 const AddExpense = () => {
   const [paidBy, setPaidBy] = useState("");
@@ -12,6 +13,8 @@ const AddExpense = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const API_URL = import.meta.env.VITE_API_URL;
+
+  
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -84,17 +87,19 @@ const AddExpense = () => {
             ))}
           </select>
         </label>
-        <label className="block text-sm font-medium text-gray-700 mt-2">
-          Amount:
+        <Input placeholder="Amount" className="block text-sm font-medium text-grey-500 mt-4 w-30"/>
+        
+        {/* <label className="block text-sm font-medium text-gray-700 mt-2">
           <input
             type="number"
             value={amount}
+            placeholder="Amount"
             onChange={(e) => setAmount(e.target.value)}
             className="mt-1 block px-3 py-2 border border-gray-300 rounded-md"
             required
           />
-        </label>
-        <label className="block text-sm font-medium text-gray-700 mt-2">
+        </label> */}
+        {/* <label className="block text-sm font-medium text-gray-700 mt-2">
           Expense Date:
           <input
             type="date"
@@ -103,7 +108,7 @@ const AddExpense = () => {
             className="mt-1 block px-3 py-2 border border-gray-300 rounded-md"
             required
           />
-        </label>
+        </label> */}
         <div className="mt-4">
           <h2 className="text-lg font-semibold">Participants</h2>
           {users.map(user => (

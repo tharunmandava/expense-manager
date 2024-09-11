@@ -1,7 +1,7 @@
 const Filler = () => {
   return (
     <>
-      <h1>プログラミングはゲイだよ</h1>
+      <h1>GG it was a Good time</h1>
     </>
   )
 }
