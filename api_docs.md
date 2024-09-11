@@ -5,7 +5,7 @@ Uses node-postgres under the hood to connect to the database.
 ## GROUPS
 
 ### Create a group 
-`POST /api/groups/create-group`
+`POST /api/groups/`
 
 #### Request
 ```json
