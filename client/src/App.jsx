@@ -1,15 +1,21 @@
-import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from 'react-router-dom';
+import {
+  Route,
+  RouterProvider,
+  createBrowserRouter,
+  createRoutesFromElements,
+} from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
-import HomePage from './pages/HomePage';
-import ManageLayout from './layouts/ManageLayout';
-import Expenses from './pages/Expenses';
-import Balances from './pages/Balances';
-import More from './pages/More';
-import Filler from './pages/Filler';
-import ExpenseDetails from './components/ExpenseDetails';
-import AddExpense from './components/AddExpense';
-import CreateGroup from './components/CreateGroup';
-import Groups from './pages/Groups';
+import HomePage from "./pages/HomePage";
+import ManageLayout from "./layouts/ManageLayout";
+import Expenses from "./pages/Expenses";
+import Balances from "./pages/Balances";
+import More from "./pages/More";
+import Filler from "./pages/Filler";
+import ExpenseDetails from "./components/ExpenseDetails";
+import AddExpense from "./components/AddExpense";
+import CreateGroup from "./components/CreateGroup";
+import Groups from "./pages/Groups";
+import Settings from "./pages/Settings";
 
 function App() {
   const router = createBrowserRouter(
@@ -26,11 +32,12 @@ function App() {
           <Route path="expenses/:expenseId/edit" element={<ExpenseDetails />} />
           <Route path="balances" element={<Balances />} />
           <Route path="more" element={<More />} />
+          <Route path="settings" element={<Settings />} />
         </Route>
 
         <Route path="filler" element={<Filler />} />
-      </Route>
-    )
+      </Route>,
+    ),
   );
 
   return <RouterProvider router={router} />;
