@@ -1,34 +1,83 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {Input} from 'antd';
+import { Switch } from 'antd';
 
 const AddExpense = () => {
   const [paidBy, setPaidBy] = useState("");
-  const [amount, setAmount] = useState("");
-  const [expenseDate, setExpenseDate] = useState("");
+  const [amount, setAmount] = useState(0);
   const [participants, setParticipants] = useState([]);
   const [participantAmounts, setParticipantAmounts] = useState({});
   const [users, setUsers] = useState([]);
+  const [isAdvancedSplit, setIsAdvancedSplit] = useState(false); 
   const navigate = useNavigate();
   const { id } = useParams();
   const API_URL = import.meta.env.VITE_API_URL;
 
-  
-
+  // Fetch users and set participants with even split
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(`${API_URL}/groups/users/${id}`);
         setUsers(response.data);
         localStorage.setItem("users", JSON.stringify(response.data));
+        
+        // Default to even split among all users
+        setParticipants(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
 
     fetchUsers();
-  }, [API_URL, id]);
+  }, []);
+
+  useEffect(() => {
+    calculateEvenSplit(participants, amount, users.find(u => u.user_name === paidBy)?.user_id);
+  }, [amount]);
+
+  const calculateEvenSplit = (participants, totalAmount, paidByUserId) => {
+    const numberOfParticipants = participants.length;
+    if (numberOfParticipants === 0) return;
+
+    const evenSplit = totalAmount / numberOfParticipants;
+
+    const updatedAmounts = participants.reduce((acc, participant) => {
+      acc[participant.user_id] = evenSplit;
+      return acc;
+    }, {});
+
+    // Adjust the amount for the `paid_by` user
+    if (paidByUserId) {
+      updatedAmounts[paidByUserId] = evenSplit - totalAmount;
+    }
+
+    setParticipantAmounts(updatedAmounts);
+  };
+
+  const adjustParticipantAmounts = (userId, customAmount) => {
+    // Calculate the total amount of all participants
+    const totalParticipants = Object.keys(participantAmounts).length;
+    const totalAmount = Object.values(participantAmounts).reduce((sum, amt) => sum + amt, 0);
+
+    // Adjust the amounts
+    const updatedAmounts = { ...participantAmounts, [userId]: customAmount };
+
+    // Calculate the remaining amount to be distributed among other participants
+    const remainingAmount = amount - customAmount;
+    const remainingParticipants = totalParticipants - 1;
+
+    if (remainingParticipants > 0) {
+      const splitAmount = remainingAmount / remainingParticipants;
+      for (const [id, amt] of Object.entries(updatedAmounts)) {
+        if (id !== userId) {
+          updatedAmounts[id] = splitAmount;
+        }
+      }
+    }
+
+    setParticipantAmounts(updatedAmounts);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,10 +89,7 @@ const AddExpense = () => {
         amount: Number(amount),
         paid_by: paidById,
         group_id: id,
-        participantAmounts: Object.fromEntries(participants.map(user => [
-          user.user_id,
-          participantAmounts[user.user_id] || 0
-        ]))
+        participantAmounts
       });
 
       navigate(`/groups/${id}/expenses`);
@@ -52,20 +98,45 @@ const AddExpense = () => {
     }
   };
 
-  const handleParticipantChange = (userId, amount) => {
-    setParticipantAmounts(prev => ({
-      ...prev,
-      [userId]: amount
-    }));
+  const handlePaidByChange = (paidByUserName) => {
+    setPaidBy(paidByUserName);
+    const paidByUserId = users.find(user => user.user_name === paidByUserName)?.user_id;
+    calculateEvenSplit(participants, amount, paidByUserId); 
+  };
+
+  const handleParticipantChange = (userId, customAmount) => {
+    if (isAdvancedSplit) {
+      adjustParticipantAmounts(userId, customAmount);
+    } else {
+      setParticipantAmounts(prev => ({
+        ...prev,
+        [userId]: customAmount
+      }));
+    }
   };
 
   const handleAddParticipant = (user) => {
     if (!participants.some(p => p.user_id === user.user_id)) {
       setParticipants([...participants, user]);
-      setParticipantAmounts(prev => ({
-        ...prev,
-        [user.user_id]: 0
-      }));
+      calculateEvenSplit([...participants, user], amount, users.find(u => u.user_name === paidBy)?.user_id);
+    }
+  };
+
+  const handleToggleAdvancedSplit = () => {
+    setIsAdvancedSplit(!isAdvancedSplit);
+    if (!isAdvancedSplit) {
+      // Reset to even split when toggling off advanced split
+      calculateEvenSplit(participants, amount, users.find(u => u.user_name === paidBy)?.user_id);
+    }
+  };
+
+  const handleAmountChange = (e) => {
+    const newAmount = Number(e.target.value);
+    setAmount(newAmount);
+
+    if (!isAdvancedSplit) {
+      // Recalculate even split when amount changes in simple mode
+      calculateEvenSplit(participants, newAmount, users.find(u => u.user_name === paidBy)?.user_id);
     }
   };
 
@@ -77,7 +148,7 @@ const AddExpense = () => {
           Paid By:
           <select
             value={paidBy}
-            onChange={(e) => setPaidBy(e.target.value)}
+            onChange={(e) => handlePaidByChange(e.target.value)}
             className="mt-1 block px-3 py-2 border border-gray-300 rounded-md"
             required
           >
@@ -87,30 +158,21 @@ const AddExpense = () => {
             ))}
           </select>
         </label>
-        <Input placeholder="Amount" className="block text-sm font-medium text-grey-500 mt-4 w-30"/>
-        
-        {/* <label className="block text-sm font-medium text-gray-700 mt-2">
+
+        <label className="block text-sm font-medium text-gray-700 mt-4">
+          Amount:
           <input
             type="number"
+            placeholder="Enter amount"
             value={amount}
-            placeholder="Amount"
-            onChange={(e) => setAmount(e.target.value)}
-            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md"
+            onChange={handleAmountChange}
+            className="block text-sm font-medium text-grey-500 mt-4 w-20"
             required
           />
-        </label> */}
-        {/* <label className="block text-sm font-medium text-gray-700 mt-2">
-          Expense Date:
-          <input
-            type="date"
-            value={expenseDate}
-            onChange={(e) => setExpenseDate(e.target.value)}
-            className="mt-1 block px-3 py-2 border border-gray-300 rounded-md"
-            required
-          />
-        </label> */}
+        </label>
+
         <div className="mt-4">
-          <h2 className="text-lg font-semibold">Participants</h2>
+          <h2 className="text-lg font-semibold">Participants <Switch checked={isAdvancedSplit} onChange={handleToggleAdvancedSplit} /></h2>
           {users.map(user => (
             <div key={user.user_id} className="flex items-center mt-2">
               <input
@@ -133,17 +195,18 @@ const AddExpense = () => {
               <label htmlFor={`participant-${user.user_id}`} className="ml-2">
                 {user.user_name}
               </label>
-              {participants.some(p => p.user_id === user.user_id) && (
+              {isAdvancedSplit && participants.some(p => p.user_id === user.user_id) && (
                 <input
                   type="number"
                   value={participantAmounts[user.user_id] || 0}
                   onChange={(e) => handleParticipantChange(user.user_id, Number(e.target.value))}
-                  className="ml-2 border border-gray-300 rounded-md"
+                  className="ml-2 border border-gray-300 rounded-md w-20"
                 />
               )}
             </div>
           ))}
         </div>
+
         <button
           type="submit"
           className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
