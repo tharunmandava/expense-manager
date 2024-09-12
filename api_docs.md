@@ -87,6 +87,30 @@ Uses node-postgres under the hood to connect to the database.
 ]
 ```
 
+### Get balances of a group
+`GET /api/groups/balances/:id`
+
+#### Request Body
+```json
+{
+    id: "QJGyneNbuql4mmaMCaSCbi"
+}
+```
+
+#### Response
+```json
+[
+    {
+        "user_id": "9",
+        "balance": "-100.00"
+    },
+    {
+        "user_id": "10",
+        "balance": "200.00"
+    }
+]
+```
+
 ## Expenses
 
 ### Create an expense with participants

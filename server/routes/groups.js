@@ -86,6 +86,33 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.get('/balances/:id', async  (req,res) =>{
+    const {id} = req.params;
+    try {
+        const getBalances = `SELECT
+                                gm.user_id,
+                                gm.user_name,
+                                COALESCE(SUM(ep.amount), 0) AS total_amount
+                            FROM
+                                group_members gm
+                            LEFT JOIN
+                                expense_participants ep ON gm.user_id = ep.user_id
+                            LEFT JOIN
+                                expenses e ON ep.expense_id = e.expense_id
+                            WHERE
+                                e.group_id = $1 
+                            GROUP BY
+                                gm.user_id, gm.user_name
+                            ORDER BY
+                                gm.user_name;`
+
+        const {rows} = await pool.query(getBalances,[id]);
+        res.status(200).send(rows);
+    } catch (error) {
+        res.status(500).JSON({message: 'theres an error getting balances', error: error});
+    }
+});
+
 //delete group
 router.delete('/:id', async (req,res) => {
     const {id} = req.params;
