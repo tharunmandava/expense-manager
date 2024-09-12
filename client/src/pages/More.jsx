@@ -1,4 +1,5 @@
 import axios from "axios";
+import ManageNavBar from "../components/ManageNavBar";
 
 const More = () => {
   
@@ -27,10 +28,11 @@ const More = () => {
   
 
     return (
-      <>
+      <div className="min-h-screen p-4">
+        <ManageNavBar />
         <button onClick={fetchusers}>click me</button>
         <button onClick={test}>localstorage</button>
-      </>
+      </div>
     )
   }
   

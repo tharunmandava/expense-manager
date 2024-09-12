@@ -1,5 +1,5 @@
-import { NavLink } from 'react-router-dom'
-import logo from '../assets/images/logo.png'
+import { NavLink } from 'react-router-dom';
+import logo from '../assets/images/logo.png';
 
 const Navbar = () => {
   const linkClass = ({ isActive }) =>
@@ -8,12 +8,10 @@ const Navbar = () => {
       : "text-[#B065FF] hover:bg-gray-900 hover:text-white rounded-md px-3 py-2";
 
   return (
-    <nav className="bg-black border-b border-black-500">
+    <nav className="sticky top-0 left-0 w-full bg-black/60 backdrop-blur-lg z-50 border-b border-transparent">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
-          <div
-            className="flex flex-1 items-center justify-center md:items-stretch md:justify-start"
-          >
+          <div className="flex flex-1 items-center justify-center md:items-stretch md:justify-start">
             {/* <!-- Logo --> */}
             <NavLink className="flex flex-shrink-0 items-center mr-4" to="/">
               {/* <img
@@ -54,4 +52,4 @@ const Navbar = () => {
   );
 }
 
-export default Navbar
+export default Navbar;

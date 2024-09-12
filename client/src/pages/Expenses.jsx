@@ -1,32 +1,13 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { NavLink, useParams } from "react-router-dom";
+import ManageNavBar from "../components/ManageNavBar";
 
 const Expenses = () => {
   const [expenses, setExpenses] = useState([]);
-  const [group, setGroup] = useState(null);
+  const [group, _] = useState(null);
   const API_URL = import.meta.env.VITE_API_URL;
   const { id } = useParams();
-
-  const fetchGroup = async () => {
-    try {
-      const response = await axios.get(`${API_URL}/groups/${id}`);
-      const newGroup = response.data;
-  
-      const storedGroupIds = JSON.parse(localStorage.getItem('groupIds')) || [];
-      
-      const updatedGroupIds = storedGroupIds.filter(groupId => groupId !== newGroup.group_id);
-  
-      updatedGroupIds.unshift(newGroup.group_id);
-  
-      localStorage.setItem('groupIds', JSON.stringify(updatedGroupIds));
-      
-      setGroup(newGroup);
-    } catch (error) {
-      console.error("Error fetching group details:", error);
-    }
-  };
-
 
   const fetchExpenses = async () => {
     try {
@@ -38,12 +19,12 @@ const Expenses = () => {
   };
 
   useEffect(() => {
-    fetchGroup();  
     fetchExpenses();  
   }, [id]);
 
   return (
-    <div className="p-4">
+    <div className="min-h-screen p-4">
+    <ManageNavBar />
       {group && <h1 className="text-2xl font-bold">Expenses for {group.group_name}</h1>}
       <NavLink
         to={`/groups/${id}/expenses/add`}

@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
-import ManageLayout from "./layouts/ManageLayout";
 import Expenses from "./pages/Expenses";
 import Balances from "./pages/Balances";
 import More from "./pages/More";
@@ -16,6 +15,7 @@ import AddExpense from "./components/AddExpense";
 import CreateGroup from "./components/CreateGroup";
 import Groups from "./pages/Groups";
 import Settings from "./pages/Settings";
+import FetchAndStore from "./layouts/FetchAndStore";
 
 function App() {
   const router = createBrowserRouter(
@@ -26,7 +26,7 @@ function App() {
         <Route path="groups/create" element={<CreateGroup />} />
 
         {/* Group-specific routes */}
-        <Route path="groups/:id" element={<ManageLayout />}>
+        <Route path="groups/:id" element={<FetchAndStore />}>
           <Route path="expenses" element={<Expenses />} />
           <Route path="expenses/add" element={<AddExpense />} />
           <Route path="expenses/:expenseId/edit" element={<ExpenseDetails />} />

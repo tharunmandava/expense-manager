@@ -1,7 +1,10 @@
 import { Input } from "antd";
+import ManageNavBar from "../components/ManageNavBar";
 
 const Settings = () => {
   return (
+    <div className="min-h-screen p-4">
+      <ManageNavBar />
     <div className="max-w-screen-md mx-auto my-4">
       <div className="bg-black my-4 text-white border-2 border-gray-50 rounded-lg flex flex-col">
         <h3 className="text-2xl mx-4 mt-4 font-semibold">Group info</h3>
@@ -20,6 +23,7 @@ const Settings = () => {
           <Input className="bg-gray-700 hover:bg-gray-500 focus:bg-gray-500 text-white my-2" />
         </div>
       </div>
+    </div>
     </div>
   );
 };

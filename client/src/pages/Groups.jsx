@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
 import axios from 'axios';
-import {Button} from 'antd';
 
 const Groups = () => {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [newGroupId, setNewGroupId] = useState(""); // State for new group ID input
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -51,42 +51,63 @@ const Groups = () => {
     }
   };
 
-  const getAllGroups = async  () => {
+  const getAllGroups = async () => {
     try {
-      const response = await axios.get(`${API_URL}/groups/`)
+      const response = await axios.get(`${API_URL}/groups/`);
       const data = response.data;
 
-
-      const groupIds = data.map(data => data.group_id);
-
-      const groupIdsString = JSON.stringify(groupIds);
-
-      localStorage.setItem('groupIds',groupIdsString)
-
-
-
+      const groupIds = data.map(group => group.group_id);
+      localStorage.setItem('groupIds', JSON.stringify(groupIds));
     } catch (error) {
-     console.log('oops!',error); 
+      console.log('Error fetching all groups:', error);
     }
   };
 
   useEffect(() => {
-    getAllGroups;
-  },[])
+    getAllGroups(); // Call the function to update group IDs
+  }, []);
+
+  const handleAddGroupClick = () => {
+    if (newGroupId) {
+      navigate(`/groups/${newGroupId}/expenses`);
+    }
+  };
 
   return (
     <div className="p-4">
+      <div className="mb-4 flex items-center gap-2">
+        <button
+          onClick={handleCreateGroupClick}
+          className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+        >
+          Create Group
+        </button>
 
-      <button
-        onClick={handleCreateGroupClick}
-        className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition-colors mb-4"
-      >
-        Create Group
-      </button>
+        <button
+          onClick={getAllGroups}
+          className="bg-green-600 py-2 px-4 rounded"
+        >
+          Get All Groups
+        </button>
 
-<button onClick={getAllGroups} className='bg-green-600 py-2 px-4 rounded '>get all groups</button>
+        <input
+          type="text"
+          value={newGroupId}
+          onChange={(e) => setNewGroupId(e.target.value)}
+          placeholder="Enter group ID"
+          className="border px-2 py-1 rounded"
+        />
+
+        <button
+          onClick={handleAddGroupClick}
+          className="bg-blue-600 text-white py-2 px-4 rounded"
+        >
+          Add
+        </button>
+      </div>
 
       <h2 className="text-xl font-bold mb-4">Group List</h2>
+
       {loading ? (
         <p>Loading...</p>
       ) : (
