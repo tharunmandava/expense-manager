@@ -10,7 +10,9 @@
 - [ ] Create balances page
 - [ ] Particular expense page leads to create/edit expense(disabled button for now)
 - [ ] Settings page
-- [ ] advanced split feature of expenses allowing user to add small expenses in the users field ('100+200' showing the answer 300 directly) 
+- [ ] advanced split feature of expenses allowing user to add small expenses in the users field ('100+200' showing the answer 300 directly)
+- [ ] add by url option
+- [ ] share url option 
 
 
 ### Server
