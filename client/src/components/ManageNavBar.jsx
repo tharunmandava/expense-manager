@@ -15,7 +15,7 @@ const ManageNavBar = ({ backgroundColor = "gray-800", textColor = "white", activ
 
   return (
     <div className="relative">
-      <nav className={`bg-${backgroundColor} p-4 mx-auto mt-4 mb-8 w-fit rounded-md shadow-lg`}>
+      <nav className={`bg-${backgroundColor} p-3 text-m mx-auto mt-4 mb-8 w-fit rounded-md shadow-lg`}>
         <ul className="flex justify-center gap-8">
           <li>
             <NavLink
@@ -59,15 +59,17 @@ const ManageNavBar = ({ backgroundColor = "gray-800", textColor = "white", activ
           </li>
         </ul>
       </nav>
-      <button
-        onClick={handleShareClick}
-        className="absolute top-1/2 right-10 transform -translate-y-1/2 bg-gray-700 text-white rounded-full p-2 shadow-lg"
-
-      >
-        {showTick ? <FaCheckCircle className="text-green-500" /> : <FaShareAlt />}
-      </button>
+     
     </div>
   );
 };
 
 export default ManageNavBar;
+
+ {/* <button
+        onClick={handleShareClick}
+        className="absolute top-1/2 right-10 transform -translate-y-1/2 bg-gray-700 text-white rounded-full p-2 shadow-lg"
+
+      >
+        {showTick ? <FaCheckCircle className="text-green-500" /> : <FaShareAlt />}
+      </button> */}

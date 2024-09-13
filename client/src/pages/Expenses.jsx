@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import ManageNavBar from "../components/ManageNavBar";
+import { IoIosArrowForward } from "react-icons/io";
 
 const Expenses = () => {
   const [expenses, setExpenses] = useState([]);
@@ -21,34 +22,71 @@ const Expenses = () => {
   useEffect(() => {
     fetchExpenses();  
   }, [id]);
+  
+const formatDate = (dateStr) => {
+  const date = new Date(dateStr);
+  const options = { day: 'numeric', month: 'short', year: '2-digit' };
+  const formattedDate = new Intl.DateTimeFormat('en-GB', options).format(date);
 
-  return (
-    <div className="min-h-screen p-4">
-    <ManageNavBar />
-      {group && <h1 className="text-2xl font-bold">Expenses for {group.group_name}</h1>}
-      <NavLink
-        to={`/groups/${id}/expenses/add`}
-        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 mb-4"
-      >
-        + Add Expense
-      </NavLink>
-      <ul className="mt-4">
-        {expenses.map((expense) => (
-          <li key={expense.expense_id} className="border p-4 mb-2 rounded">
-            <h2 className="text-lg font-semibold">Expense ID: {expense.expense_id}</h2>
-            <p>Amount: ${expense.amount}</p>
-            <p>Date: {expense.expense_date.slice(0, 10)}</p>
+  const [day,month,year] = formattedDate.split(' ');
+  return `${day} ${month}, ${year}`;
+};
+
+
+//--------------------------------------------------------------------------------------------------
+
+
+
+return (
+  <div className="min-h-screen p-4">
+    <div className="flex flex-col items-center">
+      <ManageNavBar />
+      {group && <h1 className="text-2xl font-bold mb-4">Expenses for {group.group_name}</h1>}
+
+      {/* Bottom section */}
+      <div className="bg-gray-800 border border-gray-900 rounded-lg p-6 mb-4 max-w-3xl w-full relative">
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h3 className="text-2xl font-semibold">Expenses</h3>
+            <p className="text-gray-400 text-sm mt-1">Expenses of the group</p>
+          </div>
+          <NavLink
+            to={`/groups/${id}/expenses/add`}
+            className="border border-transparent bg-green-600 hover:bg-green-700 p-2 w-10 h-10 flex items-center justify-center rounded-md text-white text-lg"
+          >
+            +
+          </NavLink>
+        </div>
+        <ul className="space-y-0">
+          {expenses.map((expense) => (
             <NavLink
-              to={`/groups/${id}/expenses/${expense.expense_id}/edit`}
-              className="text-indigo-600 hover:text-indigo-800"
+              key={expense.expense_id}
+              to={`/groups/${id}/expenses/${expense.expense_id}/edit`} // Adjust the path according to your routing setup
+              className="relative block p-4 bg-gray-800 hover:bg-gray-600 rounded-lg text-white"
             >
-              View Details
+              <div className="flex-1 pr-24">
+                <h2 className="text-sm font-semibold mb-1 pb-2">Expense: {expense.expense_id}</h2>
+                <p className="text-gray-400 text-xs ">
+                  paid by <span className="text-gray-300 font-bold">{expense.paid_by}</span>
+                </p>
+              </div>
+              <div className="absolute right-4 top-2 flex flex-col items-end p-2">
+                <p className="text-sm font-semibold mb-1 pb-3">{expense.amount}</p> {/* Amount */}
+                <p className="text-xs text-gray-400">{formatDate(expense.expense_date.slice(0, 10))}</p> {/* Date */}
+              </div>
             </NavLink>
-          </li>
-        ))}
-      </ul>
+          ))}
+        </ul>
+      </div>
     </div>
-  );
+  </div>
+);
+
+
+
+
+
+
 };
 
 export default Expenses;
