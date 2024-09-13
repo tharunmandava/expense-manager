@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, NavLink } from 'react-router-dom';
+import {FaUsers} from 'react-icons/fa';
+import { RiGroupLine } from "react-icons/ri";
 import axios from 'axios';
 
 const Groups = () => {
@@ -73,78 +75,92 @@ const Groups = () => {
     }
   };
 
-  return (
-    <div className="p-4">
-      <div className="mb-4 flex items-center gap-2">
-        <button
-          onClick={handleCreateGroupClick}
-          className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition-colors"
-        >
-          Create Group
-        </button>
+return (
+  <>
+    {/* buttons section */}
+    <div className='flex justify-center p-1'>
+      <div className="rounded-lg p-4 mb-4 max-w-3xl w-full">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
+          <h2 className="text-xl font-bold mb-4 sm:mb-0">Groups</h2>
+          <div className="flex flex-wrap gap-2 sm:gap-2">
+            <button
+              onClick={handleCreateGroupClick}
+              className="bg-blue-500 text-white font-semibold py-2 px-3 rounded hover:bg-blue-600 transition-colors"
+            >
+              Create
+            </button>
 
-        <button
-          onClick={getAllGroups}
-          className="bg-green-600 py-2 px-4 rounded"
-        >
-          Get All Groups
-        </button>
-
-        <input
-          type="text"
-          value={newGroupId}
-          onChange={(e) => setNewGroupId(e.target.value)}
-          placeholder="Enter group ID"
-          className="border px-2 py-1 rounded"
-        />
-
-        <button
-          onClick={handleAddGroupClick}
-          className="bg-blue-600 text-white py-2 px-4 rounded"
-        >
-          Add
-        </button>
-      </div>
-
-      <h2 className="text-xl font-bold mb-4">Group List</h2>
-
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        groups.length > 0 ? (
-          <div className="grid grid-cols-2 gap-4">
-            {groups.map((group) => (
-              <div key={group.group_id} className="relative p-4 border rounded-md shadow hover:bg-gray-100 transition">
-                <NavLink
-                  to={`/groups/${group.group_id}/expenses`}
-                  className="absolute inset-0 z-10"
-                >
-                </NavLink>
-                <h3 className="text-lg font-bold">{group.group_name}</h3>
-                <p className="text-sm">{group.group_description}</p>
-                <div className="mt-4 flex justify-between relative z-20">
-                  <NavLink
-                    to={`/groups/${group.group_id}/expenses`}
-                    className="text-indigo-600 hover:text-indigo-800"
-                  >
-                    View Expenses
-                  </NavLink>
-                  <button
-                    onClick={() => handleDeleteGroup(group.group_id)}
-                    className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
-                  >
-                    Delete locally
-                  </button>
-                </div>
-              </div>
-            ))}
+            <button
+              onClick={getAllGroups}
+              className="bg-green-600 text-white font-semibold py-2 px-3 rounded hover:bg-green-700 transition-colors"
+            >
+              Get All
+            </button>
           </div>
-        ) : (
-          <p>No groups found.</p>
-        )
-      )}
+        </div>
+
+        {/* <div className="flex flex-col gap-2">
+          <input
+            type="text"
+            value={newGroupId}
+            onChange={(e) => setNewGroupId(e.target.value)}
+            placeholder="Enter group ID"
+            className="border px-2 py-1 rounded w-full sm:w-auto"
+          />
+
+          <button
+            onClick={handleAddGroupClick}
+            className="bg-blue-600 text-white font-semibold py-2 px-3 rounded hover:bg-blue-700 transition-colors"
+          >
+            Add
+          </button>
+        </div> */}
+        
+      </div>
     </div>
-  );
-};
+
+    {/* groups section */}
+
+    <div className="flex justify-center p-1">
+      <div className="bg-black border border-black rounded-lg p-2 mb-4 max-w-3xl w-full"> 
+        <div className="p-2">
+          
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            groups.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2"> 
+                {groups.map((group) => (
+                  <div key={group.group_id} className="relative p-4 border rounded-md shadow border-black bg-gray-800 hover:bg-gray-700 transition cursor-pointer group w-full"> 
+                    <NavLink
+                      to={`/groups/${group.group_id}/expenses`}
+                      className="block"
+                    >
+                      <h3 className="text-ml font-semibold mb-1">{group.group_name}</h3>
+                      <p className="text-xs flex items-center gap-2">
+                        <RiGroupLine /> 4
+                      </p>
+                    </NavLink>
+                    <button
+                      className="absolute top-2 right-2 text-gray-400 group-hover:text-white group-hover:bg-gray-700 bg-gray-800 p-0.5 rounded-md h-6 w-6 flex items-center justify-center"
+                      aria-label="More options"
+                    >
+                      :)
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>No groups found.</p>
+            )
+          )}
+        </div>
+      </div>
+    </div>
+  </>
+);
+
+
+}
 
 export default Groups;
