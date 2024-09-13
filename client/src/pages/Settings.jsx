@@ -1,29 +1,43 @@
-import { Input } from "antd";
 import ManageNavBar from "../components/ManageNavBar";
 
 const Settings = () => {
   return (
-    <div className="min-h-screen p-4">
+    <div className="flex flex-col items-center min-h-screen bg-black py-4">
       <ManageNavBar />
-    <div className="max-w-screen-md mx-auto my-4">
-      <div className="bg-black my-4 text-white border-2 border-gray-50 rounded-lg flex flex-col">
-        <h3 className="text-2xl mx-4 mt-4 font-semibold">Group info</h3>
-        <div className="flex flex-row">
-          <div className="basis-1/2 m-4">
-            <label>Group name</label>
-            <Input className="bg-gray-700 hover:bg-gray-500 focus:bg-gray-500 text-white my-2" />
+
+      <div className="bg-gray-800 border border-gray-900 rounded-lg p-6 mb-4 max-w-3xl w-full">
+        <h1 className="text-2xl font-bold mb-6 text-white">Settings</h1>
+        <form onSubmit={console.log("form")} className="space-y-6">
+          <div className="flex space-x-4">
+            <label className="block text-sm font-medium text-white w-1/2">
+              Group name
+              <input
+                type="text"
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md text-white bg-black"
+                required
+              />
+            </label>
+
+            <label className="block text-sm font-medium text-white w-1/2">
+              Currency
+              <input
+                type="text"
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md text-white bg-black"
+                required
+              />
+            </label>
           </div>
-          <div className="basis-1/2 m-4">
-            <label>Currency</label>
-            <Input className="bg-gray-700 hover:bg-gray-500 focus:bg-gray-500 text-white my-2" />
-          </div>
-        </div>
-        <div className="m-4">
-          <label>Description</label>
-          <Input className="bg-gray-700 hover:bg-gray-500 focus:bg-gray-500 text-white my-2" />
-        </div>
+
+          <label className="block text-sm font-medium text-white">
+            Group information
+            <textarea
+              placeholder=""
+              className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md text-white bg-black"
+              rows="5"
+            />
+          </label>
+        </form>
       </div>
-    </div>
     </div>
   );
 };
