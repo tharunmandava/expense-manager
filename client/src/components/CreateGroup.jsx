@@ -42,66 +42,77 @@ const CreateGroup = () => {
     }
   };
 
+  //----------------------------------------------------------------------------------
+  
+  
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Create a Group</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Group Name */}
+    <div className="flex flex-col items-center min-h-screen py-4">
+      {/* Green Section */}
+      <div className="bg-black border-2 border-gray-400 rounded-lg p-6 mb-4 max-w-3xl w-full">
+        <h2 className="text-2xl font-bold mb-4 text-white">Group Information</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Flex container for Group Name and Group Currency */}
+          <div className="flex flex-col sm:flex-row sm:space-x-4">
+            {/* Group Name */}
+            <div className="flex-1">
+              <label htmlFor="name" className="block text-sm font-medium text-white">
+                Group Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="bg-black mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#B065FF] focus:border-[#B065FF] sm:text-sm"
+                required
+              />
+            </div>
+  
+            {/* Group Currency */}
+            <div className="flex-1">
+              <label htmlFor="currency" className="block text-sm font-medium text-white">
+                Group Currency
+              </label>
+              <input
+                type="text"
+                id="currency"
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value)}
+                className="mt-1 bg-black block w-full px-3 py-2 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#B065FF] focus:border-[#B065FF] sm:text-sm"
+                placeholder="INR, USD, etc."
+                required
+              />
+            </div>
+          </div>
+  
+          {/* Group Description */}
+          <div>
+            <label htmlFor="description" className="block text-sm font-medium text-white">
+              Group Description
+            </label>
+            <textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows="8"
+              className="mt-1 block w-full px-3 py-2 bg-black border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#B065FF] focus:border-[#B065FF] sm:text-sm"
+              placeholder="Enter group description"
+            />
+          </div>
+        </form>
+      </div>
+  
+      {/* Blue Section */}
+      <div className="bg-black border-2  border-gray-400 rounded-lg p-6 mb-4 max-w-3xl w-full">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Group Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            required
-          />
-        </div>
-
-        {/* Group Currency */}
-        <div>
-          <label htmlFor="currency" className="block text-sm font-medium text-gray-700">
-            Group Currency
-          </label>
-          <input
-            type="text"
-            id="currency"
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="INR, USD, etc."
-            required
-          />
-        </div>
-
-        {/* Group Description */}
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-            Group Description
-          </label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-            placeholder="Enter group description"
-            required
-          />
-        </div>
-
-        {/* Members */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Members</label>
+          <label className="block text-sm font-medium text-white">Members</label>
           {members.map((member, index) => (
             <div key={index} className="flex items-center space-x-2 mb-2">
               <input
                 type="text"
                 value={member}
                 onChange={(e) => handleMemberChange(index, e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-black rounded-md shadow-sm focus:outline-none focus:ring-[#B065FF] focus:border-[#B065FF] sm:text-sm"
                 placeholder={`Member ${index + 1}`}
                 required
               />
@@ -122,17 +133,24 @@ const CreateGroup = () => {
             Add Member
           </button>
         </div>
-
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition-colors"
-        >
-          Create Group
-        </button>
-      </form>
+      </div>
+  
+      {/* Submit Button */}
+      <button
+        type="submit"
+        className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition-colors mt-4"
+      >
+        Create Group
+      </button>
     </div>
   );
+  
+
+
+
+
+
+
 };
 
 export default CreateGroup;

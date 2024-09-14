@@ -142,7 +142,7 @@ const AddExpense = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-black py-4">
+    <div className="flex flex-col items-center min-h-screenpy-4">
     {/* Green Section - Form */}
   <div className="bg-gray-800 border border-gray-900 rounded-lg p-6 mb-4 max-w-3xl w-full">
     <h1 className="text-2xl font-bold mb-6 text-white">Create Expense</h1>

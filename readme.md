@@ -18,10 +18,12 @@
 #### ASAP
 
 - [ ] share url not working on mobile
+- [ ] if group deleted it needs to be removed from localstorage for all users
 - [ ] edgecase of paid_by user does not take part in payment(user is not added to   expense_participants) 
 - [ ] group name re-rendering everytime tab switches, need it to be there as long as user is inside group and browsing 
 - [ ] moving navlinks to the right most corner
 - [ ] settings page
+- [ ] adding a slider for expense amount(for nibba)
 
 - [ ] create drop down for add group by url
 

@@ -294,8 +294,13 @@ const ExpenseDetails = () => {
           type="submit"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm  rounded-md shadow-sm  text-white font-semibold bg-[#B065FF] hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={handleSubmit}
+          
         >
           Save Changes
+        </button>
+        <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm  rounded-md shadow-sm  text-white font-semibold bg-red-800
+             hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+              DELETE
         </button>
       </div>
     </div>
