@@ -108,7 +108,7 @@ const ExpenseDetails = () => {
       const paidById = users.find(user => user.user_name === paidBy)?.user_id;
       if (!paidById) throw new Error("Invalid payer.");
 
-      await axios.put(`${API_URL}/expenses`, {
+      await axios.put(`${API_URL}/expenses/${expenseId}`, {
         amount: Number(amount),
         paid_by: paidById,
         group_id: id,

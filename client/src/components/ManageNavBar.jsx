@@ -78,9 +78,9 @@ const ManageNavBar = ({ backgroundColor = "gray-800", textColor = "white", activ
   }, []);
 
   return (
-    <div className="relative px-4 sm:px-6 lg:px-8 pb-4">
+    <div className="relative pb-4">
       {groupName && (
-        <h2 className="text-center text-xl sm:text-2xl font-bold mb-4 text-white">
+        <h2 className="text-xl sm:text-2xl font-bold mb-4 text-white">
           {groupName}
         </h2>
       )}
@@ -140,7 +140,7 @@ const ManageNavBar = ({ backgroundColor = "gray-800", textColor = "white", activ
           </button>
 
           {showDropdown && (
-            <div ref={dropdownRef} className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-lg p-4 z-10">
+            <div ref={dropdownRef} className="absolute right-0 mt-2 w-64 bg-black shadow-lg rounded-lg p-4 z-10">
               <input
                 id="url_text"
                 type="text"
