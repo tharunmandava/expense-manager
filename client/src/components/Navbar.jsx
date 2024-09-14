@@ -13,7 +13,7 @@ const Navbar = () => {
             <div className="flex items-center">
               <NavLink className="flex flex-shrink-0 items-center mr-4" to="/">
                 <span className="text-white text-2xl font-bold">
-                  <span className='text-[#B065FF]'>えん</span> &nbsp;&nbsp; Okane
+                  <span className='text-[#B065FF]'>えん</span> &nbsp;&nbsp; Billbuddy
                 </span>
               </NavLink>
             </div>

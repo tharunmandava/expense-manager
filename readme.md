@@ -11,15 +11,15 @@
 - [ ] Settings page
 - [ ] advanced split feature of expenses allowing user to add small expenses in the users field ('100+200' showing the answer 300 directly)
 - [ ] add by url option
-- [ ] share url option 
+- [x] share url option 
 - [ ] A landing page
 - [ ] reverse the - and + in balances page
 
 #### ASAP
 
+- [ ] edgecase of paid_by user does not take part in payment(user is not added to   expense_participants) 
+
 - [ ] moving navlinks to the right most corner
-- [ ] rework manageNavBar to show active color and highlight and be to the left at all times
-- [ ] refresh loading all groups(bug)
 - [ ] create drop down for add group by url
 
 
@@ -32,4 +32,3 @@
 - [x] include delete api calls  
 - [ ] include update api calls
 - [ ] returning the list-by needs to return name for paid_by instead of id
-- [ ] 
