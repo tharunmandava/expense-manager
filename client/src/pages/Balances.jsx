@@ -28,8 +28,9 @@ const Balances = () => {
 
   return (
     <div className="min-h-screen bg-gray-950 py-4">
-      <ManageNavBar />
       <div className="flex flex-col items-center">
+
+      <ManageNavBar />
         {/* Green Section - Balances */}
         <div className="bg-gray-800 border border-gray-900 rounded-lg p-6 mb-4 max-w-3xl w-full">
           <h1 className="text-2xl font-bold mb-6 text-white">Balances</h1>
@@ -37,9 +38,14 @@ const Balances = () => {
             {balances.map((balance) => (
               <div key={balance.user_id} className="flex justify-between bg-gray-700 border border-gray-600 rounded-lg p-4">
                 <span className="text-white">{balance.user_name}</span>
-                <span className={`text-white ${balance.total_amount < 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {balance.total_amount}
+                <span className={` ${balance.total_amount < 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    { balance.total_amount < 0  
+                        ? `+${Math.abs(balance.total_amount).toFixed(2)}` 
+                        : `-${balance.total_amount}` 
+                    }
                 </span>
+
+   
               </div>
             ))}
           </div>

@@ -133,7 +133,7 @@ const Groups = () => {
                       >
                         <h3 className="text-ml font-semibold mb-1">{group.group_name}</h3>
                         <p className="text-xs flex items-center gap-2">
-                          <RiGroupLine /> 4
+                          <RiGroupLine /> 
                         </p>
                       </NavLink>
 

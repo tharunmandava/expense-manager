@@ -17,9 +17,12 @@
 
 #### ASAP
 
+- [ ] share url not working on mobile
 - [ ] edgecase of paid_by user does not take part in payment(user is not added to   expense_participants) 
-
+- [ ] group name re-rendering everytime tab switches, need it to be there as long as user is inside group and browsing 
 - [ ] moving navlinks to the right most corner
+- [ ] settings page
+
 - [ ] create drop down for add group by url
 
 
@@ -31,4 +34,4 @@
 - [x] delete group
 - [x] include delete api calls  
 - [ ] include update api calls
-- [ ] returning the list-by needs to return name for paid_by instead of id
+- [ ] returning the list-by-group needs to return name for paid_by instead of id
