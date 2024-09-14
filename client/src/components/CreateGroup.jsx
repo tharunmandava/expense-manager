@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const CreateGroup = () => {
-  const [name, setName] = useState('');
-  const [currency, setCurrency] = useState('');
-  const [description, setDescription] = useState('');
-  const [members, setMembers] = useState(['']);
+  const [name, setName] = useState("");
+  const [currency, setCurrency] = useState("");
+  const [description, setDescription] = useState("");
+  const [members, setMembers] = useState([""]);
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleAddMember = () => {
-    setMembers([...members, '']);
+    setMembers([...members, ""]);
   };
 
   const handleRemoveMember = (index) => {
@@ -34,28 +34,32 @@ const CreateGroup = () => {
         group_description: description,
         members: members,
       });
-      console.log('Group created:', response.data);
+      console.log("Group created:", response.data);
       const groupId = response.data.id;
       navigate(`/groups/${groupId}/expenses`);
     } catch (error) {
-      console.error('Error creating group:', error);
+      console.error("Error creating group:", error);
     }
   };
 
   //----------------------------------------------------------------------------------
-  
-  
+
   return (
     <div className="flex flex-col items-center min-h-screen py-4">
       {/* Green Section */}
       <div className="bg-black border-2 border-gray-400 rounded-lg p-6 mb-4 max-w-3xl w-full">
-        <h2 className="text-2xl font-bold mb-4 text-white">Group Information</h2>
+        <h2 className="text-2xl font-bold mb-4 text-white">
+          Group Information
+        </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Flex container for Group Name and Group Currency */}
           <div className="flex flex-col sm:flex-row sm:space-x-4">
             {/* Group Name */}
             <div className="flex-1">
-              <label htmlFor="name" className="block text-sm font-medium text-white">
+              <label
+                htmlFor="name"
+                className="block text-sm font-medium text-white"
+              >
                 Group Name
               </label>
               <input
@@ -67,10 +71,13 @@ const CreateGroup = () => {
                 required
               />
             </div>
-  
+
             {/* Group Currency */}
             <div className="flex-1">
-              <label htmlFor="currency" className="block text-sm font-medium text-white">
+              <label
+                htmlFor="currency"
+                className="block text-sm font-medium text-white"
+              >
                 Group Currency
               </label>
               <input
@@ -84,10 +91,13 @@ const CreateGroup = () => {
               />
             </div>
           </div>
-  
+
           {/* Group Description */}
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-white">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-white"
+            >
               Group Description
             </label>
             <textarea
@@ -101,11 +111,13 @@ const CreateGroup = () => {
           </div>
         </form>
       </div>
-  
+
       {/* Blue Section */}
       <div className="bg-black border-2  border-gray-400 rounded-lg p-6 mb-4 max-w-3xl w-full">
         <div>
-          <label className="block text-sm font-medium text-white">Members</label>
+          <label className="block text-sm font-medium text-white">
+            Members
+          </label>
           {members.map((member, index) => (
             <div key={index} className="flex items-center space-x-2 mb-2">
               <input
@@ -134,23 +146,17 @@ const CreateGroup = () => {
           </button>
         </div>
       </div>
-  
+
       {/* Submit Button */}
       <button
         type="submit"
         className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition-colors mt-4"
+        onClick={handleSubmit}
       >
         Create Group
       </button>
     </div>
   );
-  
-
-
-
-
-
-
 };
 
 export default CreateGroup;
