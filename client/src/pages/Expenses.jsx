@@ -40,8 +40,10 @@ const formatDate = (dateStr) => {
 return (
   <div className="min-h-screen p-4">
     <div className="flex flex-col items-center">
-      <ManageNavBar />
-      {group && <h1 className="text-2xl font-bold mb-4">Expenses for {group.group_name}</h1>}
+      {/* Wrapper for aligning group name and ManageNavBar */}
+      <div className="w-full max-w-3xl">
+        <ManageNavBar />
+      </div>
 
       {/* Bottom section */}
       <div className="bg-gray-800 border border-gray-900 rounded-lg p-6 mb-4 max-w-3xl w-full relative">
@@ -61,18 +63,18 @@ return (
           {expenses.map((expense) => (
             <NavLink
               key={expense.expense_id}
-              to={`/groups/${id}/expenses/${expense.expense_id}/edit`} // Adjust the path according to your routing setup
+              to={`/groups/${id}/expenses/${expense.expense_id}/edit`}
               className="relative block p-4 bg-gray-800 hover:bg-gray-600 rounded-lg text-white"
             >
               <div className="flex-1 pr-24">
                 <h2 className="text-sm font-semibold mb-1 pb-2">Expense: {expense.expense_id}</h2>
-                <p className="text-gray-400 text-xs ">
+                <p className="text-gray-400 text-xs">
                   paid by <span className="text-gray-300 font-bold">{expense.paid_by}</span>
                 </p>
               </div>
               <div className="absolute right-4 top-2 flex flex-col items-end p-2">
-                <p className="text-sm font-semibold mb-1 pb-3">{expense.amount}</p> {/* Amount */}
-                <p className="text-xs text-gray-400">{formatDate(expense.expense_date.slice(0, 10))}</p> {/* Date */}
+                <p className="text-sm font-semibold mb-1 pb-3">{expense.amount}</p>
+                <p className="text-xs text-gray-400">{formatDate(expense.expense_date.slice(0, 10))}</p>
               </div>
             </NavLink>
           ))}

@@ -27,10 +27,12 @@ const Balances = () => {
   }, [group_url]);
 
   return (
-    <div className="min-h-screen bg-gray-950 py-4">
-      <div className="flex flex-col items-center">
-
-      <ManageNavBar />
+    <div className="min-h-screen p-4">
+    <div className="flex flex-col items-center">
+      {/* Wrapper for aligning group name and ManageNavBar */}
+      <div className="w-full max-w-3xl">
+        <ManageNavBar />
+      </div>
         {/* Green Section - Balances */}
         <div className="bg-gray-800 border border-gray-900 rounded-lg p-6 mb-4 max-w-3xl w-full">
           <h1 className="text-2xl font-bold mb-6 text-white">Balances</h1>
