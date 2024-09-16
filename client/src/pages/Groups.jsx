@@ -94,13 +94,13 @@ const Groups = () => {
     <>
       {/* buttons section */}
       <div className='flex justify-center p-1'>
-        <div className="rounded-lg p-4 mb-4 max-w-3xl w-full">
+        <div className="rounded-lg pt-4 mb-0 max-w-3xl w-full">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
             <h2 className="text-xl font-bold mb-4 sm:mb-0">Groups</h2>
             <div className="flex flex-wrap gap-2 sm:gap-2">
               <button
                 onClick={handleCreateGroupClick}
-                className="bg-blue-500 text-white font-semibold py-2 px-3 rounded hover:bg-blue-600 transition-colors"
+                className="bg-primary-200 text-white font-semibold py-2 px-3 rounded hover:bg-purple-600 transition-colors"
               >
                 Create
               </button>
@@ -118,7 +118,7 @@ const Groups = () => {
 
       {/* groups section */}
       <div className="flex justify-center p-1">
-        <div className="bg-black border border-black rounded-lg p-2 mb-4 max-w-3xl w-full">
+        <div className="  rounded-lg p-2 mb-4 max-w-3xl w-full">
           <div className="p-2">
             {loading ? (
               <p>Loading...</p>
@@ -126,7 +126,7 @@ const Groups = () => {
               groups.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {groups.map((group) => (
-                    <div key={group.group_id} className="relative p-4 border rounded-md shadow border-black bg-gray-800 hover:bg-gray-700 transition cursor-pointer group w-full">
+                    <div key={group.group_id} className="relative p-4 border-0 rounded-md shadow  bg-gray-800 hover:bg-gray-700 transition cursor-pointer group w-full">
                       <NavLink
                         to={`/groups/${group.group_id}/expenses`}
                         className="block"
@@ -146,12 +146,12 @@ const Groups = () => {
                       </button>
 
                       {openDropdown === group.group_id && (
-                        <div ref={dropdownRef} className="absolute top-9 right-2 bg-black text-red-400 rounded shadow-md">
+                        <div ref={dropdownRef} className="absolute top-9 right-2 bg-materialblack-100 text-primary-200 rounded shadow-md">
                           <button
-                            className="block px-4 py-2 hover:bg-gray-500 hover:text-white relative"
+                            className="block rounded-md px-4 py-2 hover:bg-gray-500 hover:text-white relative"
                             onClick={() => handleDeleteGroupLocally(group.group_id)}
                           >
-                            Delete group locally
+                            Remove from device
                           </button>
                         </div>
                       )}

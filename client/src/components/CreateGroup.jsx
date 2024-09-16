@@ -47,7 +47,7 @@ const CreateGroup = () => {
   return (
     <div className="flex flex-col items-center min-h-screen py-4">
       {/* Green Section */}
-      <div className="bg-black border-2 border-gray-400 rounded-lg p-6 mb-4 max-w-3xl w-full">
+      <div className=" border-0 bg-gray-800  rounded-lg p-6 mb-4 max-w-3xl w-full">
         <h2 className="text-2xl font-bold mb-4 text-white">
           Group Information
         </h2>
@@ -67,7 +67,7 @@ const CreateGroup = () => {
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="bg-black mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#B065FF] focus:border-[#B065FF] sm:text-sm"
+                className="bg-black mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary-100 focus:border-primary-100 sm:text-sm"
                 required
               />
             </div>
@@ -85,7 +85,7 @@ const CreateGroup = () => {
                 id="currency"
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="mt-1 bg-black block w-full px-3 py-2 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#B065FF] focus:border-[#B065FF] sm:text-sm"
+                className="mt-1 bg-black block w-full px-3 py-2 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary-100 focus:border-primary-100 sm:text-sm"
                 placeholder="INR, USD, etc."
                 required
               />
@@ -98,22 +98,22 @@ const CreateGroup = () => {
               htmlFor="description"
               className="block text-sm font-medium text-white"
             >
-              Group Description
+              Group Information
             </label>
             <textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows="8"
-              className="mt-1 block w-full px-3 py-2 bg-black border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#B065FF] focus:border-[#B065FF] sm:text-sm"
-              placeholder="Enter group description"
+              className="mt-1 block w-full px-3 py-2 bg-black border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary-100 focus:border-primary-100 sm:text-sm"
+              placeholder="Information relevant to the group"
             />
           </div>
         </form>
       </div>
 
       {/* Blue Section */}
-      <div className="bg-black border-2  border-gray-400 rounded-lg p-6 mb-4 max-w-3xl w-full">
+      <div className="bg-gray-800 border-0 rounded-lg p-6 mb-4 max-w-3xl w-full">
         <div>
           <label className="block text-sm font-medium text-white">
             Members
@@ -124,7 +124,7 @@ const CreateGroup = () => {
                 type="text"
                 value={member}
                 onChange={(e) => handleMemberChange(index, e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-black rounded-md shadow-sm focus:outline-none focus:ring-[#B065FF] focus:border-[#B065FF] sm:text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-black rounded-md shadow-sm focus:outline-none focus:ring-primary-100 focus:border-primary-100 sm:text-sm"
                 placeholder={`Member ${index + 1}`}
                 required
               />

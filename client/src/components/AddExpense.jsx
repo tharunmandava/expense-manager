@@ -170,7 +170,7 @@ const AddExpense = () => {
               <input
                 type="text"
                 placeholder="Sunday night dinner"
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md text-white bg-black"
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md text-white bg-black focus:outline-none focus:ring-primary-100 focus:border-primary-100"
                 required
               />
               <p className="text-gray-400 text-xs mt-1">
@@ -182,7 +182,7 @@ const AddExpense = () => {
               Notes
               <textarea
                 placeholder=""
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md text-white bg-black"
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md text-white bg-black focus:outline-none focus:ring-primary-100 focus:border-primary-100"
                 rows="2"
               />
             </label>
@@ -194,7 +194,7 @@ const AddExpense = () => {
               <select
                 value={paidBy}
                 onChange={(e) => handlePaidByChange(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md bg-black text-white"
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100"
                 required
               >
                 <option value="">Select User</option>
@@ -215,30 +215,30 @@ const AddExpense = () => {
                 type="number"
                 value={amount}
                 onChange={handleAmountChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md bg-black text-white"
+                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100"
                 required
               />
             </label>
           </div>
 
-          <div className="flex items-center space-x-10 mt-4">
-            <div className="flex items-center space-x-4 mt-4">
-              <span className="text-sm font-semibold text-white ">
-                Advanced split
+          {/* advanced split*/}
+          
+          <div className="flex items-center space-x-5 mt-4">
+            <div className="flex flex-col items-start space-y-1 mt-4">
+              <div className="flex items-center space-x-4">
+                <span className="text-sm font-semibold text-white">
+                  Advanced split
+                </span>
+                <Switch
+                  disabled
+                  checked={isAdvancedSplit}
+                  onChange={handleToggleAdvancedSplit}
+                  className="mt-1"
+                />
+              </div>
+              <span className="text-xs text-gray-400">
+                Coming soon!
               </span>
-              <Switch
-                disabled
-                checked={isAdvancedSplit}
-                onChange={handleToggleAdvancedSplit}
-                className="mt-1"
-              />
-            </div>
-
-            <div className="flex items-center space-x-4 mt-4">
-              <span className="text-sm font-semibold text-white">
-                Reimbursement
-              </span>
-              <Switch className="mt-1" />
             </div>
           </div>
         </form>

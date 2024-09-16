@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import ManageNavBar from '../components/ManageNavBar';
 
 const Settings = () => {
   const [name, setName] = useState("");
@@ -88,6 +89,9 @@ const Settings = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen py-4">
+      <div className="w-full max-w-3xl">
+        <ManageNavBar />
+      </div>
       {/* Green Section */}
       <div className="bg-black border-2 border-gray-400 rounded-lg p-6 mb-4 max-w-3xl w-full">
         <h2 className="text-2xl font-bold mb-4 text-white">

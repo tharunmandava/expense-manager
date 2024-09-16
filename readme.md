@@ -13,17 +13,21 @@
 - [ ] add by url option
 - [x] share url option 
 - [ ] A landing page
-- [ ] reverse the - and + in balances page
+- [x] reverse the - and + in balances page
+- [ ] adding a slider for expense amount(for nibba)
 
 #### ASAP
 
+- [ ] delete group locally dropdown not closing when clicked on the button itself
+- [ ] adjust theme settings on settings page as well
+- [ ] when hovering on dropdown it should not trigger hover on group itself
+- [ ] select/deselect user not working in add expense
 - [x] share url not working on mobile
 - [x] if group deleted it needs to be removed from localstorage for all users
-- [ ] edgecase of paid_by user does not take part in payment(user is not added to   expense_participants) 
+- [x] edgecase of paid_by user does not take part in payment(user is not added to   expense_participants) 
 - [x] group name re-rendering everytime tab switches, need it to be there as long as user is inside group and browsing 
 - [ ] moving navlinks to the right most corner
 - [x] settings page
-- [ ] adding a slider for expense amount(for nibba)
 - [x] create drop down for add group by url
 
 
