@@ -20,6 +20,7 @@
 
 - [ ] delete group locally dropdown not closing when clicked on the button itself
 - [ ] adjust theme settings on settings page as well
+- [ ] save changes and delete button stuck to each other
 - [ ] when hovering on dropdown it should not trigger hover on group itself
 - [ ] select/deselect user not working in add expense
 - [x] share url not working on mobile
@@ -40,3 +41,4 @@
 - [x] include delete api calls  
 - [ ] include update api calls
 - [ ] returning the list-by-group needs to return name for paid_by instead of id
+- [ ] expense title in expenses table
