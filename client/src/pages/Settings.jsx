@@ -93,7 +93,7 @@ const Settings = () => {
         <ManageNavBar />
       </div>
       {/* Green Section */}
-      <div className="bg-black border-2 border-gray-400 rounded-lg p-6 mb-4 max-w-3xl w-full">
+      <div className="bg-gray-800 border border-gray-900 rounded-lg p-4 mb-4 max-w-3xl w-full">
         <h2 className="text-2xl font-bold mb-4 text-white">
           Edit Group Information
         </h2>
@@ -159,7 +159,7 @@ const Settings = () => {
       </div>
 
       {/* Blue Section */}
-      <div className="bg-black border-2  border-gray-400 rounded-lg p-6 mb-4 max-w-3xl w-full">
+      <div className="bg-gray-800 border border-gray-900 rounded-lg p-4 mb-4 max-w-3xl w-full">
         <div>
           <label className="block text-sm font-medium text-white">
             Members
@@ -194,7 +194,7 @@ const Settings = () => {
       </div>
 
       {/* Submit Button */}
-      <div className="flex gap-4 mt-4">
+      <div className="w-full max-w-3xl flex justify-between mt-4">
         <button
           type="submit"
           disabled

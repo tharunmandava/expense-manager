@@ -289,7 +289,7 @@ const ExpenseDetails = () => {
      
 
       {/* Button at the Bottom Left */}
-      <div className="max-w-3xl w-full flex justify-start px-4">
+      <div className="w-full max-w-3xl flex justify-between mt-4">
         <button disabled
           type="submit"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm  rounded-md shadow-sm  text-white font-semibold bg-[#B065FF] hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
