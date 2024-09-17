@@ -52,4 +52,6 @@ GROUP BY
 ORDER BY
     gm.user_name;
 
+set server and client encoding to utf-8
+
 
