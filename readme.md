@@ -19,6 +19,7 @@
 #### ASAP
 
 - [ ] add by url for a group in groups page
+- [ ] implement a footer
 - [x] delete group locally dropdown not closing when clicked on the button itself
 - [x] adjust theme settings on settings page as well
 - [x] save changes and delete button stuck to each other
