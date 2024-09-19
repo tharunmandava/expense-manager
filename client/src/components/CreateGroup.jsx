@@ -27,6 +27,15 @@ const CreateGroup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+
+    const hasEmptyMembers = members.some(member => member.trim() === ""); // to prevent the group member field empty
+    
+
+    if(hasEmptyMembers){
+      alert("please enter the names of the group members");
+      return;
+    }
     try {
       const response = await axios.post(`${API_URL}/groups/`, {
         group_name: name,

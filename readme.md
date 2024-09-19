@@ -19,7 +19,7 @@
 #### ASAP
 
 - [ ] add by url for a group in groups page
-- [ ] group can be created with empty members(require atleast 1)
+- [x] group can be created with empty members(require atleast 1)
 - [ ] implement a footer
 - [x] delete group locally dropdown not closing when clicked on the button itself
 - [x] adjust theme settings on settings page as well
