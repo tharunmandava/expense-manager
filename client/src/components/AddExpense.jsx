@@ -5,26 +5,26 @@ import { Switch } from "antd";
 import "../styles/inputfix.css";
 
 const AddExpense = () => {
-  const [paidBy, setPaidBy] = useState("");
-  const [amount, setAmount] = useState(0);
-  const [participants, setParticipants] = useState([]);
-  const [participantAmounts, setParticipantAmounts] = useState({});
-  const [users, setUsers] = useState([]);
-  const [isAdvancedSplit, setIsAdvancedSplit] = useState(false);
+  const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const { id } = useParams();
-  const API_URL = import.meta.env.VITE_API_URL;
 
-  // Fetch users and set participants with even split
+  const [usersData, setUsersData] = useState([]);
+  const [amount, setAmount] = useState(0);
+  const [paidBy, setPaidBy] = useState(-1);
+  const [isAdvancedSplit, setIsAdvancedSplit] = useState(false);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(`${API_URL}/groups/users/${id}`);
-        setUsers(response.data);
         localStorage.setItem("users", JSON.stringify(response.data));
 
-        // Default to even split among all users
-        setParticipants(response.data);
+        setUsersData(
+          response.data.map((user) => {
+            return { user: user, isParticipant: true, amount: 0 };
+          }),
+        );
       } catch (error) {
         console.error("Error fetching users:", error);
       }
@@ -32,129 +32,62 @@ const AddExpense = () => {
 
     fetchUsers();
   }, []);
-
+  /*
   useEffect(() => {
-    calculateEvenSplit(
-      participants,
-      amount,
-      users.find((u) => u.user_name === paidBy)?.user_id,
-    );
-  }, [amount]);
+    doEvenSplit(usersData, amount, paidBy);
+  }, [usersData, amount, paidBy]);
+*/
+  const doEvenSplit = (usersData, totalAmount, paidBy) => {
+    const participantsNumber = usersData.filter(
+      (userData) => userData.isParticipant,
+    ).length; //count number of participants among users
+    if (participantsNumber === 0 || !paidBy) return;
 
-  const calculateEvenSplit = (participants, totalAmount, paidByUserId) => {
-    if (participants.length === 0 || !paidByUserId) return;
+    setUsersData((usersData) => {
+      const evenSplit = totalAmount / participantsNumber;
 
-    const evenSplit = totalAmount / participants.length;
-    let amounts = {};
-    participants.map((participant) => {
-      amounts[participant.user_id] = evenSplit;
-    });
-    amounts[paidByUserId] =
-      (amounts[paidByUserId] ? amounts[paidByUserId] : 0) - totalAmount;
-    //console.log(`amounts ${JSON.stringify(amounts)}`);
-
-    setParticipantAmounts(amounts);
-  };
-
-  const adjustParticipantAmounts = (userId, customAmount) => {
-    // Calculate the total amount of all participants
-    const totalParticipants = Object.keys(participantAmounts).length;
-    const totalAmount = Object.values(participantAmounts).reduce(
-      (sum, amt) => sum + amt,
-      0,
-    );
-
-    // Adjust the amounts
-    const updatedAmounts = { ...participantAmounts, [userId]: customAmount };
-
-    // Calculate the remaining amount to be distributed among other participants
-    const remainingAmount = amount - customAmount;
-    const remainingParticipants = totalParticipants - 1;
-
-    if (remainingParticipants > 0) {
-      const splitAmount = remainingAmount / remainingParticipants;
-      for (const [id, amt] of Object.entries(updatedAmounts)) {
-        if (id !== userId) {
-          updatedAmounts[id] = splitAmount;
+      const newUsersData = usersData.map((userData) => {
+        if (userData.isParticipant) {
+          userData.amount = evenSplit;
+        } else {
+          userData.amount = 0;
         }
-      }
-    }
-
-    setParticipantAmounts(updatedAmounts);
+        if (userData.user.user_id === paidBy) userData.amount -= totalAmount;
+        return userData;
+      });
+      return newUsersData;
+    });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (paidBy === -1 || amount === 0) return;
+    let participantAmounts = {};
+    usersData.map((userData) => {
+      if (userData.amount !== 0)
+        participantAmounts[userData.user.user_id] = userData.amount;
+    });
+
+    console.log(
+      `submit ${JSON.stringify({
+        amount: Number(amount),
+        paid_by: paidBy,
+        group_id: id,
+        participantAmounts: participantAmounts,
+      })}`,
+    );
     try {
-      const paidById = users.find((user) => user.user_name === paidBy)?.user_id;
-      if (!paidById) throw new Error("Invalid payer.");
+      if (paidBy === -1) throw new Error("Invalid payer.");
 
       await axios.post(`${API_URL}/expenses`, {
         amount: Number(amount),
-        paid_by: paidById,
+        paid_by: paidBy,
         group_id: id,
-        participantAmounts,
+        participantAmounts: participantAmounts,
       });
-
       navigate(`/groups/${id}/expenses`);
     } catch (error) {
       console.error("Error adding expense:", error);
-    }
-  };
-
-  const handlePaidByChange = (paidByUserName) => {
-    setPaidBy(paidByUserName);
-    const paidByUserId = users.find(
-      (user) => user.user_name === paidByUserName,
-    )?.user_id;
-    calculateEvenSplit(participants, amount, paidByUserId);
-  };
-
-  const handleParticipantChange = (userId, customAmount) => {
-    if (isAdvancedSplit) {
-      adjustParticipantAmounts(userId, customAmount);
-    } else {
-      setParticipantAmounts((prev) => ({
-        ...prev,
-        [userId]: customAmount,
-      }));
-    }
-  };
-
-  const handleAddParticipant = (user) => {
-    if (!participants.some((p) => p.user_id === user.user_id)) {
-      setParticipants([...participants, user]);
-      calculateEvenSplit(
-        [...participants, user],
-        amount,
-        users.find((u) => u.user_name === paidBy)?.user_id,
-      );
-    }
-  };
-
-  const handleToggleAdvancedSplit = () => {
-    setIsAdvancedSplit(!isAdvancedSplit);
-    if (!isAdvancedSplit) {
-      // Reset to even split when toggling off advanced split
-      calculateEvenSplit(
-        participants,
-        amount,
-        users.find((u) => u.user_name === paidBy)?.user_id,
-      );
-    }
-  };
-
-  const handleAmountChange = (e) => {
-    const newAmount = Number(e.target.value);
-    setAmount(newAmount);
-
-    if (!isAdvancedSplit) {
-      // Recalculate even split when amount changes in simple mode
-      calculateEvenSplit(
-        participants,
-        newAmount,
-        users.find((u) => u.user_name === paidBy)?.user_id,
-      );
     }
   };
 
@@ -193,14 +126,22 @@ const AddExpense = () => {
               Paid By:
               <select
                 value={paidBy}
-                onChange={(e) => handlePaidByChange(e.target.value)}
+                onChange={(e) => {
+                  setPaidBy((_) => {
+                    return e.target.value;
+                  });
+                  doEvenSplit(usersData, amount, e.target.value);
+                }}
                 className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100"
                 required
               >
-                <option value="">Select User</option>
-                {users.map((user) => (
-                  <option key={user.user_id} value={user.user_name}>
-                    {user.user_name}
+                <option value="-1">Select User</option>
+                {usersData.map((userData) => (
+                  <option
+                    key={userData.user.user_id}
+                    value={userData.user.user_id}
+                  >
+                    {userData.user.user_name}
                   </option>
                 ))}
               </select>
@@ -214,7 +155,12 @@ const AddExpense = () => {
               <input
                 type="number"
                 value={amount}
-                onChange={handleAmountChange}
+                onChange={(e) => {
+                  setAmount((_) => {
+                    return e.target.value;
+                  });
+                  doEvenSplit(usersData, e.target.value, paidBy);
+                }}
                 className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100"
                 required
               />
@@ -222,7 +168,7 @@ const AddExpense = () => {
           </div>
 
           {/* advanced split*/}
-          
+
           <div className="flex items-center space-x-5 mt-4">
             <div className="flex flex-col items-start space-y-1 mt-4">
               <div className="flex items-center space-x-4">
@@ -232,13 +178,13 @@ const AddExpense = () => {
                 <Switch
                   disabled
                   checked={isAdvancedSplit}
-                  onChange={handleToggleAdvancedSplit}
+                  onChange={(e) => {
+                    console.log("handletoggleadvancedsplit");
+                  }}
                   className="mt-1"
                 />
               </div>
-              <span className="text-xs text-gray-400">
-                Coming soon!
-              </span>
+              <span className="text-xs text-gray-400">Coming soon!</span>
             </div>
           </div>
         </form>
@@ -247,53 +193,44 @@ const AddExpense = () => {
       {/* Blue Section - Participants */}
       <div className="bg-gray-800 border border-gray-900 rounded-lg p-4 mb-4 max-w-3xl w-full">
         <h2 className="text-2xl font-semibold mb-4 text-white">Paid for</h2>
-        {users.map((user, index) => (
+        {usersData.map((userData, index) => (
           <div
-            key={user.user_id}
+            key={userData.user.user_id}
             className={`flex items-center p-2 w-full ${
-              index < users.length - 1 ? "border-b border-gray-600" : ""
+              index < usersData.length - 1 ? "border-b border-gray-600" : ""
             }`}
           >
             <input
               type="checkbox"
-              id={`participant-${user.user_id}`}
+              id={`participant-${userData.user.user_id}`}
               onChange={(e) => {
-                if (e.target.checked) {
-                  handleAddParticipant(user);
-                } else {
-                  setParticipants(
-                    participants.filter((p) => p.user_id !== user.user_id),
-                  );
-                  setParticipantAmounts((prev) => {
-                    const newAmounts = { ...prev };
-                    delete newAmounts[user.user_id];
-                    return newAmounts;
-                  });
-                }
+                let newUsersData = usersData;
+                newUsersData[index].isParticipant = e.target.checked;
+                setUsersData((prevUsersData) => {
+                  return newUsersData;
+                });
+                doEvenSplit(newUsersData, amount, paidBy);
               }}
-              checked={participants.some((p) => p.user_id === user.user_id)}
+              checked={usersData[index].isParticipant}
               className="mr-2"
             />
             <label
-              htmlFor={`participant-${user.user_id}`}
-              className="text-white "
+              htmlFor={`participant-${userData.user.user_id}`}
+              className="text-white"
             >
-              {user.user_name}
+              {userData.user.user_name}
             </label>
+            {/*
             {isAdvancedSplit &&
               participants.some((p) => p.user_id === user.user_id) && (
                 <input
                   type="number"
                   value={participantAmounts[user.user_id] || 0}
-                  onChange={(e) =>
-                    handleParticipantChange(
-                      user.user_id,
-                      Number(e.target.value),
-                    )
-                  }
+                  onChange={(e) => console.log("handleparticipantchange")}
                   className="ml-2 border border-blue-300 rounded-md w-20"
                 />
               )}
+            */}
           </div>
         ))}
       </div>
