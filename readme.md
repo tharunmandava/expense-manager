@@ -17,7 +17,12 @@
 - [ ] adding a slider for expense amount(for nibba)
 
 #### ASAP
-
+- [x] display the currency chosen - Create Expense page
+- [x] select/deselect user not working - Create Expense page
+- [ ] Form validation (show indication when certain inputs not filled) - Create Expense page
+- [ ] paid by 'X' and paid only for 'X' edge case - Create Expense page
+- [ ] recently accessed/created expenses should show up first
+- [ ] Edit Expense page once Create Expense page is done
 - [ ] add by url for a group in groups page
 - [x] group can be created with empty members(require atleast 1)
 - [ ] implement a footer
@@ -25,7 +30,6 @@
 - [x] adjust theme settings on settings page as well
 - [x] save changes and delete button stuck to each other
 - [x] when hovering on dropdown it should not trigger hover on group itself
-- [ ] select/deselect user not working in add expense
 - [x] share url not working on mobile
 - [x] if group deleted it needs to be removed from localstorage for all users
 - [x] edgecase of paid_by user does not take part in payment(user is not added to   expense_participants) 

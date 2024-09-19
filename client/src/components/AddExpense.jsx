@@ -12,6 +12,7 @@ const AddExpense = () => {
   const [usersData, setUsersData] = useState([]);
   const [amount, setAmount] = useState(0);
   const [paidBy, setPaidBy] = useState(-1);
+  const [groupCurrency, setGroupCurrency] = useState("");
   const [isAdvancedSplit, setIsAdvancedSplit] = useState(false);
 
   useEffect(() => {
@@ -32,6 +33,22 @@ const AddExpense = () => {
 
     fetchUsers();
   }, []);
+
+  // Fetch currency
+  useEffect(() => {
+    const fetchCurrency = async () => {
+      try{
+        const response = await axios.get(`${API_URL}/groups/${id}`)
+        const { group_currency } = response.data;
+        setGroupCurrency(group_currency);
+      } catch (e){
+        console.error("Error fetching currency:", e);
+      };
+    };
+
+    fetchCurrency();
+  }, []);
+
   /*
   useEffect(() => {
     doEvenSplit(usersData, amount, paidBy);
@@ -92,7 +109,7 @@ const AddExpense = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screenpy-4">
+    <div className="flex flex-col items-center min-h-screenpy-4 p-4">
       {/* Green Section - Form */}
       <div className="bg-gray-800 border border-gray-900 rounded-lg p-6 mb-4 max-w-3xl w-full">
         <h1 className="text-2xl font-bold mb-6 text-white">Create Expense</h1>
@@ -151,7 +168,7 @@ const AddExpense = () => {
             </label>
 
             <label className="block text-sm font-medium text-white w-1/2">
-              Amount
+              Amount ({groupCurrency})
               <input
                 type="number"
                 value={amount}
@@ -204,16 +221,22 @@ const AddExpense = () => {
               type="checkbox"
               id={`participant-${userData.user.user_id}`}
               onChange={(e) => {
-                let newUsersData = usersData;
-                newUsersData[index].isParticipant = e.target.checked;
-                setUsersData((prevUsersData) => {
-                  return newUsersData;
+                const updatedUsersData = usersData.map((userData, i) => {
+                  if (i === index) {
+                    return {
+                      ...userData,
+                      isParticipant: e.target.checked,
+                    };
+                  }
+                  return userData;
                 });
-                doEvenSplit(newUsersData, amount, paidBy);
+                setUsersData(updatedUsersData);
+                doEvenSplit(updatedUsersData, amount, paidBy);
               }}
-              checked={usersData[index].isParticipant}
+              checked={userData.isParticipant}
               className="mr-2"
             />
+
             <label
               htmlFor={`participant-${userData.user.user_id}`}
               className="text-white"

@@ -163,6 +163,15 @@ const ExpenseDetails = () => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`${API_URL}/expenses/${expenseId}`);
+      navigate(`/groups/${id}/expenses`); // Navigate back to the expenses list
+    } catch (error) {
+      console.error("Error deleting expense:", error);
+    }
+  };  
+
   return (
     <div className="flex flex-col items-center min-h-screen bg-black py-4">
     {/* Green Section - Form */}
@@ -299,7 +308,7 @@ const ExpenseDetails = () => {
           Save Changes
         </button>
         <button className="inline-flex items-center px-4 py-2 border border-transparent text-sm  rounded-md shadow-sm  text-white font-semibold bg-red-800
-             hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+             hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" onClick={handleDelete}>
               DELETE
         </button>
       </div>
