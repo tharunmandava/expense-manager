@@ -17,15 +17,14 @@
 - [ ] adding a slider for expense amount(for nibba)
 
 #### ASAP
+- [ ] display chosen title name and check involved participants under "Paid For" - Edit Expense Page
+- [ ] recently created expenses should show up first
+- [ ] implement a footer
+- [x] Edit Expense page once Create Expense page is done
 - [x] display the currency chosen - Create Expense page
 - [x] select/deselect user not working - Create Expense page
-- [ ] Form validation (show indication when certain inputs not filled) - Create Expense page
-- [ ] paid by 'X' and paid only for 'X' edge case - Create Expense page
-- [ ] recently accessed/created expenses should show up first
-- [ ] Edit Expense page once Create Expense page is done
-- [ ] add by url for a group in groups page
+- [x] Form validation (show indication when certain inputs not filled) - Create Expense page
 - [x] group can be created with empty members(require atleast 1)
-- [ ] implement a footer
 - [x] delete group locally dropdown not closing when clicked on the button itself
 - [x] adjust theme settings on settings page as well
 - [x] save changes and delete button stuck to each other

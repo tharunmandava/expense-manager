@@ -14,6 +14,12 @@ const AddExpense = () => {
   const [paidBy, setPaidBy] = useState(-1);
   const [groupCurrency, setGroupCurrency] = useState("");
   const [isAdvancedSplit, setIsAdvancedSplit] = useState(false);
+  const [expenseTitle, setExpenseTitle] = useState("");
+  const [isAnyParticipantChecked, setIsAnyParticipantChecked] = useState(true);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+
+
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -78,7 +84,11 @@ const AddExpense = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (paidBy === -1 || amount === 0) return;
+
+    setIsSubmitted(true);
+
+    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || !isAnyParticipantChecked) return;
+
     let participantAmounts = {};
     usersData.map((userData) => {
       if (userData.amount !== 0)
@@ -115,18 +125,28 @@ const AddExpense = () => {
         <h1 className="text-2xl font-bold mb-6 text-white">Create Expense</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex space-x-4">
-            <label className="block text-sm font-medium text-white w-1/2">
-              Expense Title
-              <input
-                type="text"
-                placeholder="Sunday night dinner"
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md text-white bg-black focus:outline-none focus:ring-primary-100 focus:border-primary-100"
-                required
-              />
-              <p className="text-gray-400 text-xs mt-1">
-                Enter a description for the expense
-              </p>
-            </label>
+          <label
+            className={`block text-sm font-medium ${
+              isSubmitted && expenseTitle == "" ? "text-red-500" : "text-white"
+            } w-1/2`}
+          >
+            Expense Title
+            <input
+              type="text"
+              value={expenseTitle}
+              onChange={(e) => {
+                setExpenseTitle(e.target.value);
+              }}
+              placeholder="Sunday night dinner"
+              className={`mt-1 block w-full px-3 py-2 border ${
+                isSubmitted && expenseTitle == "" ? "border-red-500" : "border-gray-700"
+              } rounded-md text-white bg-black focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
+              required
+            />
+            <p className="text-gray-400 text-xs mt-1">
+              Enter a description for the expense
+            </p>
+          </label>
 
             <label className="block text-sm font-medium text-white w-1/2">
               Notes
@@ -139,49 +159,53 @@ const AddExpense = () => {
           </div>
 
           <div className="flex space-x-4">
-            <label className="block text-sm font-medium text-white w-1/2">
-              Paid By:
-              <select
-                value={paidBy}
-                onChange={(e) => {
-                  setPaidBy((_) => {
-                    return e.target.value;
-                  });
-                  doEvenSplit(usersData, amount, e.target.value);
-                }}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100"
-                required
-              >
-                <option value="-1">Select User</option>
-                {usersData.map((userData) => (
-                  <option
-                    key={userData.user.user_id}
-                    value={userData.user.user_id}
-                  >
-                    {userData.user.user_name}
-                  </option>
-                ))}
-              </select>
-              <p className="text-gray-400 text-xs mt-1">
-                Select the participant who paid for the expense
-              </p>
-            </label>
+          <label
+            className={`block text-sm font-medium ${
+              isSubmitted && paidBy == -1 ? "text-red-500" : "text-white"
+            } w-1/2`}
+          >
+            Paid By:
+            <select
+              value={paidBy}
+              onChange={(e) => {
+                setPaidBy(e.target.value);
+                doEvenSplit(usersData, amount, e.target.value);
+              }}
+              className={`mt-1 block w-full px-3 py-2 border ${
+                isSubmitted && paidBy == -1 ? "border-red-500" : "border-gray-700"
+              } rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
+              required
+            >
+              <option value="-1" disabled>Select User</option>
+              {usersData.map((userData) => (
+                <option
+                  key={userData.user.user_id}
+                  value={userData.user.user_id}
+                >
+                  {userData.user.user_name}
+                </option>
+              ))}
+            </select>
+            <p className="text-gray-400 text-xs mt-1">
+              Select the participant who paid for the expense
+            </p>
+          </label>
 
-            <label className="block text-sm font-medium text-white w-1/2">
-              Amount ({groupCurrency})
-              <input
-                type="number"
-                value={amount}
-                onChange={(e) => {
-                  setAmount((_) => {
-                    return e.target.value;
-                  });
-                  doEvenSplit(usersData, e.target.value, paidBy);
-                }}
-                className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100"
-                required
-              />
-            </label>
+
+          <label className={`block text-sm font-medium ${isSubmitted && amount <= 0 ? 'text-red-500' : 'text-white'} w-1/2`}>
+            Amount ({groupCurrency})
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                doEvenSplit(usersData, e.target.value, paidBy);
+              }}
+              className={`mt-1 block w-full px-3 py-2 border ${isSubmitted && amount <=  0 ? 'border-red-500' : 'border-gray-700'} rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
+              required
+            />
+          </label>
+
           </div>
 
           {/* advanced split*/}
@@ -231,18 +255,23 @@ const AddExpense = () => {
                   return userData;
                 });
                 setUsersData(updatedUsersData);
+                
+                // Update the state to check if any participant is selected
+                setIsAnyParticipantChecked(updatedUsersData.some(user => user.isParticipant));
                 doEvenSplit(updatedUsersData, amount, paidBy);
               }}
               checked={userData.isParticipant}
               className="mr-2"
             />
-
             <label
               htmlFor={`participant-${userData.user.user_id}`}
-              className="text-white"
+              className={`font-bold ${!isAnyParticipantChecked ? ' text-red-500' : 'text-white'}`}
             >
               {userData.user.user_name}
             </label>
+
+            
+
             {/*
             {isAdvancedSplit &&
               participants.some((p) => p.user_id === user.user_id) && (
@@ -254,18 +283,31 @@ const AddExpense = () => {
                 />
               )}
             */}
+            
           </div>
-        ))}
-      </div>
 
+          
+        ))}
+       {!isAnyParticipantChecked && (
+              <p className="text-red-500 mt-2">The expense must be paid for at least one participant.</p>
+       )} 
+      </div>
+      
       {/* Button at the Bottom Left */}
-      <div className="max-w-3xl w-full flex justify-start px-4">
+      <div className="w-full max-w-3xl flex justify-between">
         <button
           type="submit"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm  rounded-md shadow-sm  text-white font-semibold bg-[#B065FF] hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={handleSubmit}
         >
           Add Expense
+        </button>
+        <button
+          type="button"
+          className="inline-flex items-center px-4 py-2 border border-transparent text-sm rounded-md shadow-sm text-white font-semibold bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          onClick={() => navigate(`/groups/${id}/expenses`)}
+        >
+          Cancel
         </button>
       </div>
     </div>
