@@ -8,6 +8,7 @@ const Settings = () => {
   const [currency, setCurrency] = useState("");
   const [description, setDescription] = useState("");
   const [members, setMembers] = useState([""]);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
   const { id } = useParams();
@@ -48,6 +49,19 @@ const Settings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setIsSubmitted(true);
+
+    if (name == "" || currency == "" || name.length > 255 || currency.length > 5) return;
+
+    const hasEmptyMembers = members.some(member => member.trim() === "" || member.length > 255);
+    
+
+    if(hasEmptyMembers){
+      alert("Please ensure all member names are filled and within 255 characters.");
+      return;
+    }
+
     try {
       const response = await axios.put(`${API_URL}/groups/${id}`, {
         group_name: name, 
@@ -104,16 +118,18 @@ const Settings = () => {
             <div className="flex-1">
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-white"
+                className={`block text-sm font-medium ${isSubmitted && name === "" || name.length > 255 ? "text-red-500" : "text-white" }`}
               >
-                Group Name
+                Group Name {name.length > 255 && " (max 255 characters)"}
               </label>
               <input
                 type="text"
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="bg-black mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#B065FF] focus:border-[#B065FF] sm:text-sm"
+                className={`bg-black mt-1 block w-full px-3 py-2 border ${
+                  isSubmitted && name === "" || name.length > 255 ? "border-red-500" : "border-gray-700"
+                } rounded-md shadow-sm focus:outline-none focus:ring-primary-100 focus:border-primary-100 sm:text-sm`}
                 required
               />
             </div>
@@ -122,16 +138,18 @@ const Settings = () => {
             <div className="flex-1">
               <label
                 htmlFor="currency"
-                className="block text-sm font-medium text-white"
+                className={`block text-sm font-medium ${isSubmitted && currency == "" || currency.length > 5 ? "text-red-500" : "text-white" }`}
               >
-                Group Currency
+                Group Currency {currency.length > 5 && " (max 5 characters)"}
               </label>
               <input
                 type="text"
                 id="currency"
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
-                className="mt-1 bg-black block w-full px-3 py-2 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#B065FF] focus:border-[#B065FF] sm:text-sm"
+                className={`bg-black mt-1 block w-full px-3 py-2 border ${
+                  isSubmitted && currency == "" || currency.length > 5 ? "border-red-500" : "border-gray-700"
+                } rounded-md shadow-sm focus:outline-none focus:ring-primary-100 focus:border-primary-100 sm:text-sm`}
                 placeholder="INR, USD, etc."
                 required
               />

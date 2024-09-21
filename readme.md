@@ -18,8 +18,8 @@
 
 #### ASAP
 - [ ] display chosen title name and check involved participants under "Paid For" - Edit Expense Page
-- [ ] recently created expenses should show up first
-- [ ] implement a footer
+- [x] recently created expenses should show up first
+- [x] implement a footer
 - [x] Edit Expense page once Create Expense page is done
 - [x] display the currency chosen - Create Expense page
 - [x] select/deselect user not working - Create Expense page
@@ -47,4 +47,5 @@
 - [x] include delete api calls  
 - [ ] include update api calls
 - [ ] returning the list-by-group needs to return name for paid_by instead of id
-- [ ] expense title in expenses table
+- [ ] expense title in expenses table 
+- [ ] API call for members involved in a specific expense

@@ -60,7 +60,7 @@ return (
           </NavLink>
         </div>
         <ul className="space-y-0">
-          {expenses.map((expense) => (
+          {expenses.slice().reverse().map((expense) => (
             <NavLink
               key={expense.expense_id}
               to={`/groups/${id}/expenses/${expense.expense_id}/edit`}
