@@ -17,7 +17,9 @@
 - [ ] adding a slider for expense amount(for nibba)
 
 #### ASAP
-- [ ] display chosen title name and check involved participants under "Paid For" - Edit Expense Page
+- [ ] Name change - Group Settings Page
+- [ ] update footer
+- [ ] check only the involved participants under "Paid For" - Edit Expense Page
 - [x] recently created expenses should show up first
 - [x] implement a footer
 - [x] Edit Expense page once Create Expense page is done

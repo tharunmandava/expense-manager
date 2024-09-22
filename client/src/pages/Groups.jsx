@@ -18,14 +18,21 @@ const Groups = () => {
       const storedGroupIds = JSON.parse(localStorage.getItem('groupIds')) || [];
       const groupPromises = storedGroupIds.map(id => axios.get(`${API_URL}/groups/${id}`));
       const responses = await Promise.all(groupPromises);
-      const fetchedGroups = responses.map(response => response.data);
+      const fetchedGroups = responses.map(response => response.data).filter(group => Object.keys(group).length > 0);
+      
       setGroups(fetchedGroups);
+
+      if (fetchedGroups.length < responses.length) {
+        const validGroupIds = fetchedGroups.map(group => group.group_id); 
+        localStorage.setItem('groupIds', JSON.stringify(validGroupIds));
+      }
+
     } catch (error) {
       console.error('Error fetching group details:', error);
     } finally {
       setLoading(false);
     }
-  }, [API_URL]);
+  }, []);
 
   const fetchMemberCounts = useCallback(async () => {
     if (groups.length === 0) return;
@@ -134,6 +141,7 @@ const Groups = () => {
               ) : (
                 groups.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    
                     {groups.map((group) => (
                       <div
                         key={group.group_id}

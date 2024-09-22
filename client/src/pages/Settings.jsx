@@ -63,6 +63,7 @@ const Settings = () => {
     }
 
     try {
+      console.log(members)
       const response = await axios.put(`${API_URL}/groups/${id}`, {
         group_name: name, 
         group_currency: currency,
@@ -71,7 +72,7 @@ const Settings = () => {
       });
       console.log("Group created:", response.data);
       const groupId = response.data.id;
-      navigate(`/groups/${groupId}/expenses`);
+      navigate(`/groups/${id}/expenses`);
     } catch (error) {
       console.error("Error creating group:", error);
     }
@@ -215,7 +216,6 @@ const Settings = () => {
       <div className="w-full max-w-3xl flex justify-between mt-4">
         <button
           type="submit"
-          disabled
           className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition-colors"
           onClick={handleSubmit}
         >
