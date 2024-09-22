@@ -18,7 +18,8 @@ router.get('/by-group/:id', async (req, res) => {
     try {
        await pool.query("BEGIN"); 
 
-       const listExpenseQuery = `SELECT * FROM expenses WHERE group_id = $1`;
+       const listExpenseQuery = `SELECT e.expense_id,e.title,e.amount,e.expense_date,e.description,gm.user_name AS paid_by,
+                                 e.group_id FROM expenses e JOIN group_members gm ON e.paid_by = gm.user_id WHERE e.group_id = $1`;
 
        const {rows} = await pool.query(listExpenseQuery,[id]);
 
@@ -107,5 +108,45 @@ router.post('/', async (req, res) => {
         res.status(500).send('Error creating expense');
     }
 });
+
+//updating expense
+router.put('/:id', async (req,res) => {
+    const {id} = req.params;
+
+    const {title,amount,description, participants} = req.body;
+
+    try {
+
+        await client.query('BEGIN');
+
+        const expenseUpdateQuery = `UPDATE expenses SET title = $1, amount = $2, description = $3 WHERE expense_id = $4 RETURNING *`;
+        
+        const result = await pool.query(expenseUpdateQuery,[title,amount,description,id]);
+
+        if(result.rowCount === 0){
+            await pool.query('ROLLBACK');
+            return res.status(404).json({message: "expense not found"});
+        }
+
+        if(Array.isArray(participants)){
+            const deleteExpenseParticipantsQuery = `DELETE FROM expense_participants WHERE expense_id = $1`; 
+            await pool.query(deleteExpenseParticipantsQuery,[id]);
+        }
+
+        const newExpenseParticipantsQuery = `INSERT INTO expense_participants (expense_id,user_id,amount) VALUES ($1,$2,$3)`
+
+        const participantQueries = participants.map(participant => 
+            pool.query(newExpenseParticipantsQuery,[expense_id,participant.user_id, participant.amount])
+        );
+        
+        await Promise.all(participantQueries);
+        res.status(200).json({message:'expense updated successfully', expense : result.rows[0]});
+
+    } catch (error) {
+        await pool.query('ROLLBACK');
+        res.status(500).json({message: 'error updating expense'});
+        
+    }
+})
 
 module.exports = router;

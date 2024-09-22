@@ -45,7 +45,7 @@
 - [x] update group making to include user creation inside it
 - [x] delete group
 - [x] include delete api calls  
-- [ ] include update api calls
-- [ ] returning the list-by-group needs to return name for paid_by instead of id
-- [ ] expense title in expenses table 
-- [ ] API call for members involved in a specific expense
+- [x] returning the list-by-group needs to return name for paid_by instead of id
+- [x] expense title in expenses table 
+- [x] API call for members involved in a specific expense
+- [x] include update api calls

@@ -16,6 +16,7 @@ CREATE TABLE group_members (
 
 CREATE TABLE expenses (
     expense_id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL, /* not null will be applied in production not applied in test db*/
     paid_by BIGINT NOT NULL,  
     amount DECIMAL(10, 2) NOT NULL,
     expense_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

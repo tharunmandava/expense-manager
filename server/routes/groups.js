@@ -131,5 +131,29 @@ router.delete('/:id', async (req,res) => {
     }
 });
 
+//updating a group 
+router.put('/:id', async (req,res) => {
+    const {id} = req.params;
+
+    const {group_name,group_currency,group_description} = req.body;
+
+    try {
+        
+        const updateGroupQuery = ` UPDATE groups SET group_name = $1, group_currency = $2, group_description = $3 WHERE group_id = $4`;
+
+        const result = await pool.query(updateGroupQuery, [group_name,group_currency,group_description,id]);
+
+        if(result.rowCount === 0){
+            return res.status(404).json({message : 'Group not found'});
+        }
+
+        res.status(200).json({message : "group information updated", group : result.rows[0]});
+
+    } catch (error) {
+        console.log('error occured', error);
+        res.status(500).json({message : "error updating group", error : error});       
+    };
+});
+
 
 module.exports = router;
