@@ -82,14 +82,14 @@ router.delete('/:id', async (req,res) => {
 
 //create an expense
 router.post('/', async (req, res) => {
-    const { amount,paid_by,group_id,participantAmounts } = req.body;
+    const { title,amount,paid_by,group_id,description,participantAmounts } = req.body;
 
     try {
 
         await pool.query("BEGIN");
-        const createExpenseQuery =`INSERT INTO expenses(paid_by,amount,group_id) VALUES ($1,$2,$3) RETURNING expense_id`;
+        const createExpenseQuery =`INSERT INTO expenses(title,paid_by,amount,description,group_id) VALUES ($1,$2,$3,$4,$5) RETURNING expense_id`;
         
-        const { rows } = await pool.query(createExpenseQuery,[paid_by,amount,group_id])
+        const { rows } = await pool.query(createExpenseQuery,[title,paid_by,amount,description,group_id])
         const expense_id = rows[0].expense_id;
 
         for(const user_id in participantAmounts){
@@ -110,43 +110,53 @@ router.post('/', async (req, res) => {
 });
 
 //updating expense
-router.put('/:id', async (req,res) => {
-    const {id} = req.params;
 
-    const {title,amount,description, participants} = req.body;
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { title, amount, description, paid_by, group_id, participantAmounts } = req.body;
 
+    const client = await pool.connect();
     try {
-
         await client.query('BEGIN');
 
-        const expenseUpdateQuery = `UPDATE expenses SET title = $1, amount = $2, description = $3 WHERE expense_id = $4 RETURNING *`;
-        
-        const result = await pool.query(expenseUpdateQuery,[title,amount,description,id]);
+        const groupCheckQuery = `SELECT * FROM groups WHERE group_id = $1`;
+        const groupCheck = await client.query(groupCheckQuery, [group_id]);
 
-        if(result.rowCount === 0){
-            await pool.query('ROLLBACK');
-            return res.status(404).json({message: "expense not found"});
+        if (groupCheck.rowCount === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ message: "Group ID invalid" });
         }
 
-        if(Array.isArray(participants)){
+        const expenseUpdateQuery = `UPDATE expenses SET title = $1, paid_by = $2, amount = $3, description = $4, group_id = $5 WHERE expense_id = $6 RETURNING *`;
+        const result = await client.query(expenseUpdateQuery, [title, paid_by, amount, description, group_id, id]);
+
+        if (result.rowCount === 0) {
+            await client.query('ROLLBACK');
+            return res.status(404).json({ message: "Expense not found" });
+        }
+
+        if (participantAmounts && typeof participantAmounts === 'object' && Object.keys(participantAmounts).length > 0) {
             const deleteExpenseParticipantsQuery = `DELETE FROM expense_participants WHERE expense_id = $1`; 
-            await pool.query(deleteExpenseParticipantsQuery,[id]);
+            await client.query(deleteExpenseParticipantsQuery, [id]);
+
+            const newExpenseParticipantsQuery = `INSERT INTO expense_participants (expense_id, user_id, amount) VALUES ($1, $2, $3)`;
+            const participantQueries = Object.entries(participantAmounts).map(([user_id, amount]) => 
+                client.query(newExpenseParticipantsQuery, [id, user_id, amount])
+            );
+
+            await Promise.all(participantQueries);
         }
 
-        const newExpenseParticipantsQuery = `INSERT INTO expense_participants (expense_id,user_id,amount) VALUES ($1,$2,$3)`
+        await client.query('COMMIT');
+        res.status(200).json({ message: 'Expense updated successfully', expense: result.rows[0] });
 
-        const participantQueries = participants.map(participant => 
-            pool.query(newExpenseParticipantsQuery,[expense_id,participant.user_id, participant.amount])
-        );
-        
-        await Promise.all(participantQueries);
-        res.status(200).json({message:'expense updated successfully', expense : result.rows[0]});
-
-    } catch (error) {
-        await pool.query('ROLLBACK');
-        res.status(500).json({message: 'error updating expense'});
-        
+    } catch (err) {
+        await client.query('ROLLBACK'); 
+        console.error('Error updating expense:', err);
+        res.status(500).json({ message: 'Error updating expense', error: err.message, expense_id: id });
+    } finally {
+        client.release();
     }
-})
+});
 
 module.exports = router;
