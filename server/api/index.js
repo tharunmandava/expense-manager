@@ -14,15 +14,19 @@ app.use(cors(corsOptions));
 
 app.use(express.json())
 
+app.get('/', (req,res) => res.send("Express on Vercel"));
+
 const expenseRouter = require('./routes/expenses');
 app.use('/api/expenses', expenseRouter);
 
 const groupRouter = require('./routes/groups');
 app.use('/api/groups', groupRouter);
 
-app.listen(5000,() => {
+app.listen(3000,() => {
     console.log("server started!");
 });
+
+module.exports = app;
 
 
 
