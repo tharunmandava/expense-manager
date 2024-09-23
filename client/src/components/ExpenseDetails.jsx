@@ -15,30 +15,25 @@ const ExpenseDetails = () => {
   const [groupCurrency, setGroupCurrency] = useState("");
   const [isAdvancedSplit, setIsAdvancedSplit] = useState(false);
   const [expenseTitle, setExpenseTitle] = useState("");
+  const [expenseDescription, setExpenseDescription] = useState("");
   const [isAnyParticipantChecked, setIsAnyParticipantChecked] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-
-
-  
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const storedUsers = localStorage.getItem("users");
+        const response = await axios.get(`${API_URL}/groups/users/${id}`);
 
-        const users = JSON.parse(storedUsers);
         setUsersData(
-          users.map((user) => {
+          response.data.map((user) => {
             return { user: user, isParticipant: true, amount: 0 };
-          })
+          }),
         );
-
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
-  
+
     fetchUsers();
   }, []);
 
@@ -46,12 +41,14 @@ const ExpenseDetails = () => {
     const fetchExpenseDetails = async () => {
       try {
         const response = await axios.get(`${API_URL}/expenses/${expenseId}`);
+        
         const { expense } = response.data;
-  
-        const paidByUser = usersData.find(user => user.user_id === expense.paid_by)?.user_name || "";
-  
-        setPaidBy(paidByUser); 
+
+        setPaidBy(expense.paid_by); 
         setAmount(expense.amount);
+        setExpenseTitle(expense.title);
+        setExpenseDescription(expense.description);
+        
       } catch (error) {
         console.error("Error fetching expense details:", error);
       }
@@ -88,7 +85,6 @@ const ExpenseDetails = () => {
 
     setUsersData((usersData) => {
       const evenSplit = totalAmount / participantsNumber;
-
       const newUsersData = usersData.map((userData) => {
         if (userData.isParticipant) {
           userData.amount = evenSplit;
@@ -108,25 +104,33 @@ const ExpenseDetails = () => {
     setIsSubmitted(true);
 
     if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked) return;
-
+    
+    await doEvenSplit(usersData, amount, paidBy);
+    
     let participantAmounts = {};
     usersData.map((userData) => {
-      if (userData.amount !== 0)
+      if (userData.amount)
         participantAmounts[userData.user.user_id] = userData.amount;
     });
+    
 
     console.log(
       `submit ${JSON.stringify({
+        title: expenseTitle,
+        description: expenseDescription,
         amount: Number(amount),
         paid_by: paidBy,
         group_id: id,
         participantAmounts: participantAmounts,
       })}`,
     );
+    
     try {
       if (paidBy === -1) throw new Error("Invalid payer.");
 
-      await axios.put(`${API_URL}/expenses`, {
+      await axios.put(`${API_URL}/expenses/${expenseId}`, {
+        title: expenseTitle,
+        description: expenseDescription,
         amount: Number(amount),
         paid_by: paidBy,
         group_id: id,
@@ -184,7 +188,10 @@ const ExpenseDetails = () => {
             <label className="block text-sm font-medium text-white w-1/2">
               Notes
               <textarea
-                placeholder=""
+                value={expenseDescription}
+                onChange={(e) => {
+                  setExpenseDescription(e.target.value);
+                }}
                 className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md text-white bg-black focus:outline-none focus:ring-primary-100 focus:border-primary-100"
                 rows="2"
               />
@@ -329,7 +336,6 @@ const ExpenseDetails = () => {
       {/* Button at the Bottom Left */}
       <div className="w-full max-w-3xl flex justify-between">
       <button
-          disabled
           type="submit"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm rounded-md shadow-sm text-white font-semibold bg-[#B065FF] hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={handleSubmit}
@@ -352,8 +358,8 @@ const ExpenseDetails = () => {
           DELETE
         </button>
       </div>
-
     </div>
+
   );
 };
 

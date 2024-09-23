@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Switch } from "antd";
+import { Descriptions, Switch } from "antd";
 import "../styles/inputfix.css";
 
 const AddExpense = () => {
@@ -15,6 +15,7 @@ const AddExpense = () => {
   const [groupCurrency, setGroupCurrency] = useState("");
   const [isAdvancedSplit, setIsAdvancedSplit] = useState(false);
   const [expenseTitle, setExpenseTitle] = useState("");
+  const [expenseDescription, setExpenseDescription] = useState("");
   const [isAnyParticipantChecked, setIsAnyParticipantChecked] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -25,7 +26,6 @@ const AddExpense = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(`${API_URL}/groups/users/${id}`);
-        localStorage.setItem("users", JSON.stringify(response.data));
 
         setUsersData(
           response.data.map((user) => {
@@ -107,6 +107,8 @@ const AddExpense = () => {
       if (paidBy === -1) throw new Error("Invalid payer.");
 
       await axios.post(`${API_URL}/expenses`, {
+        title: expenseTitle,
+        description: expenseDescription,
         amount: Number(amount),
         paid_by: paidBy,
         group_id: id,
@@ -151,7 +153,10 @@ const AddExpense = () => {
             <label className="block text-sm font-medium text-white w-1/2">
               Notes
               <textarea
-                placeholder=""
+                value={expenseDescription}
+                onChange={(e) => {
+                  setExpenseDescription(e.target.value);
+                }}
                 className="mt-1 block w-full px-3 py-2 border border-gray-700 rounded-md text-white bg-black focus:outline-none focus:ring-primary-100 focus:border-primary-100"
                 rows="2"
               />
