@@ -23,6 +23,16 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/get-all',async(req,res) => {
+    try {
+        const {rows} = await pool.query(`SELECT * FROM groups`); 
+
+        res.send(200).json({rows});
+    } catch (error) {
+        res.send(500).json({message : "error occured", error : error}); 
+    }
+})
+
 router.get('/users/:id', async (req, res) => {
     const {id} = req.params;
     try {
