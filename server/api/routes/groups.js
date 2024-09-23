@@ -49,7 +49,7 @@ router.get('/:id', async (req,res) => {
         const data = await pool.query("SELECT * FROM groups WHERE group_id = $1", [id]); 
         res.status(200).send(data.rows[0]);
     } catch (error) {
-       res.sendStatus(500).send(error); 
+       res.sendStatus(500).json({message : "coudnt get group", error : error}); 
     }
 });
 
