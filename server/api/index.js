@@ -26,6 +26,14 @@ app.listen(3000,() => {
     console.log("server started!");
 });
 
+
+//error handling
+
+app.use((err,req,res,next) => {
+    console.log(err.stack);
+    res.status(500).send("someting broke :/");
+})
+
 module.exports = app;
 
 

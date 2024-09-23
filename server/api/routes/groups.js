@@ -17,8 +17,7 @@ genUUID = () => {
 //list all of the groups
 router.get('/', async (req, res) => {
     try {
-        const data = await pool.query("SELECT * FROM groups");
-        res.status(200).send(data.rows);
+        res.send("ur inside groups!");
     } catch (error) {
         console.log("error getting list-groups", error);
     }

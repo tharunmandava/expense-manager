@@ -5,8 +5,7 @@ const pool = require('../db');
 //list all of the expenses
 router.get('/', async (req, res) => {
     try {
-        const data = await pool.query("SELECT * FROM expenses");
-        res.status(200).send(data.rows);
+        res.status(200).send("ur inside expenses!");
     } catch (error) {
         console.log("error getting list-expenses", error);
     }
