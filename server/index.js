@@ -1,9 +1,11 @@
+require('dotenv').config()
+
 const express = require("express");
 const app = express();
 const pool = require("./db");
 const cors = require('cors')
 const corsOptions = {
-    origin: true,
+    origin: process.env.CORS_ORIGIN,
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
     allowedHeaders: ["Content-Type", "Authorization"]
 };
