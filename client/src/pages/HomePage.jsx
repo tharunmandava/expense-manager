@@ -1,6 +1,13 @@
 import React, { useEffect } from 'react';
+import {useNavigate} from 'react-router-dom';
 
 const HomePage = () => {
+
+  const navigate = useNavigate();
+
+  const handleCreateGroupClick = () => {
+    navigate('/groups/create');
+  };
 
   useEffect(() => {
     document.body.classList.add('bg-black');
@@ -25,7 +32,9 @@ const HomePage = () => {
         </p>
   
         {/* Centered Button */}
-        <button className="mt-6 bg-primary-300 hover:bg-primary-200 text-white font-semibold py-2 px-4 rounded hover:bg-primary-600 transition">
+        <button className="mt-6 bg-primary-300 hover:bg-primary-200 text-white font-semibold py-2 px-4 rounded hover:bg-primary-600 transition"
+          onClick={handleCreateGroupClick} 
+        >
           Create a group
         </button>
   
