@@ -42,18 +42,35 @@ const CreateGroup = () => {
       return;
     }
     
-    try {
-      const response = await axios.post(`${API_URL}/groups/`, {
-        group_name: name,
-        group_currency: currency,
-        group_description: description,
-        members: members,
-      });
-      console.log("Group created:", response.data);
-      const groupId = response.data.id;
-      navigate(`/groups/${groupId}/expenses`);
+    // try {
+    //   const response = await axios.post(`${API_URL}/groups/`, {
+    //     group_name: name,
+    //     group_currency: currency,
+    //     group_description: description,
+    //     members: members,
+    //   });
+    //   console.log("Group created:", response.data);
+    //   const groupId = response.data.id;
+    //   navigate(`/groups/${groupId}/expenses`);
+    // } catch (error) {
+    //   console.error("Error creating group:", error);
+    // }
+      try {
+        const response = await axios.post(`${API_URL}/groups/`, {
+            group_name: name,
+            group_currency: currency,
+            group_description: description,
+            members: members,
+        }, {
+            headers: {
+                'Content-Type': 'application/json' // Only include Content-Type header
+            }
+        });
+        console.log("Group created:", response.data);
+        const groupId = response.data.id;
+        navigate(`/groups/${groupId}/expenses`);
     } catch (error) {
-      console.error("Error creating group:", error);
+      console.error("Error creating group:", error.response ? error.response.data : error.message); 
     }
   };
 
