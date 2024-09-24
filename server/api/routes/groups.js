@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../db');
+const { pool }= require('../db');
 const crypto = require('crypto');
 
 genUUID = () => {
@@ -17,21 +17,21 @@ genUUID = () => {
 //list all of the groups
 router.get('/', async (req, res) => {
     try {
-        res.send("ur inside groups!");
+        return res.send("ur inside groups!");
     } catch (error) {
         console.log("error getting list-groups", error);
     }
 });
 
-router.get('/get-all',async(req,res) => {
+router.get('/get-all', async (req, res) => {
     try {
-        const {rows} = await pool.query(`SELECT * FROM groups`); 
-
-        res.send(200).json({rows});
-    } catch (error) {
-        res.send(500).json({message : "error occured", error : error}); 
+        const { rows } = await pool.query('SELECT * FROM groups'); 
+        return res.status(200).json({ rows }); // Use json() for consistency
+    } catch (err) {
+        return res.status(500).json({ message: "Error occurred", error: err.message || err });
     }
-})
+});
+
 
 router.get('/users/:id', async (req, res) => {
     const {id} = req.params;

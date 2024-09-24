@@ -11,14 +11,14 @@
 - [x] Settings page
 - [ ] advanced split feature of expenses allowing user to add small expenses in the users field ('100+200' showing the answer 300 directly)
 - [x] share url option 
-- [ ] A landing page
+- [x] A landing page
 - [x] reverse the - and + in balances page
 
 - [ ] adding a slider for expense amount(for nibba)
 
 #### ASAP
 - [ ] Name change - Group Settings Page
-- [ ] update footer
+- [x] update footer
 - [ ] check only the involved participants under "Paid For" - Edit Expense Page
 - [x] recently created expenses should show up first
 - [x] implement a footer
@@ -41,13 +41,3 @@
 
 
 ### Server
-
-- [x] Create an expense with group and participants
-- [x] Create a group and members
-- [x] update group making to include user creation inside it
-- [x] delete group
-- [x] include delete api calls  
-- [x] returning the list-by-group needs to return name for paid_by instead of id
-- [x] expense title in expenses table 
-- [x] API call for members involved in a specific expense
-- [x] include update api calls

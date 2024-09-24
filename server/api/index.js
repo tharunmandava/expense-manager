@@ -22,7 +22,7 @@ app.use('/api/expenses', expenseRouter);
 const groupRouter = require('./routes/groups');
 app.use('/api/groups', groupRouter);
 
-app.listen(3000,() => {
+app.listen(process.env.PORT,() => {
     console.log("server started!");
 });
 

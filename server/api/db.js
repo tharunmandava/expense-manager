@@ -28,5 +28,11 @@ const { Pool } = require('pg')
 require('dotenv').config()
 
 const pool = new Pool({
-  connectionString: "postgres://default:ZV7H4wTbdRPK@ep-snowy-mouse-a1ow1b91-pooler.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require?sslmode=require",
+  connectionString: process.env.POSTGRES_URL
 })
+
+pool.connect()
+  .then(() => console.log("database connected"))
+  .catch(err => console.log("database connection failed",err))
+
+module.exports = { pool };
