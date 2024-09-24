@@ -92,7 +92,7 @@ const Groups = () => {
   const getAllGroups = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/groups/`);
+      const response = await axios.get(`${API_URL}/groups/get-all`);
       const data = response.data;
       const groupIds = data.map(group => group.group_id);
       localStorage.setItem('groupIds', JSON.stringify(groupIds));
