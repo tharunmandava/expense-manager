@@ -17,9 +17,9 @@
 - [ ] adding a slider for expense amount(for nibba)
 
 #### ASAP
-- [ ] Name change - Group Settings Page
+- [ ] Name change cache issue - Group Settings Page
 - [x] update footer
-- [ ] check only the involved participants under "Paid For" - Edit Expense Page
+- [x] check only the involved participants under "Paid For" - Edit Expense Page
 - [x] recently created expenses should show up first
 - [x] implement a footer
 - [x] Edit Expense page once Create Expense page is done

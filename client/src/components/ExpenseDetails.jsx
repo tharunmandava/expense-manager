@@ -26,36 +26,47 @@ const ExpenseDetails = () => {
 
         setUsersData(
           response.data.map((user) => {
-            return { user: user, isParticipant: true, amount: 0 };
-          }),
+            return { user: user, isParticipant: false, amount: 0 };
+          })
         );
       } catch (error) {
         console.error("Error fetching users:", error);
       }
     };
-
+  
     fetchUsers();
-  }, []);
-
+  }, [id]);
+  
   useEffect(() => {
     const fetchExpenseDetails = async () => {
       try {
         const response = await axios.get(`${API_URL}/expenses/${expenseId}`);
+        const { expense, expense_participants } = response.data;
         
-        const { expense } = response.data;
-
         setPaidBy(expense.paid_by); 
         setAmount(expense.amount);
         setExpenseTitle(expense.title);
         setExpenseDescription(expense.description);
-        
+        console.log(expense_participants)
+        setUsersData((prevUsers) =>
+          prevUsers.map((userObj) => {
+            const participant = expense_participants.find(
+              (p) => p.user_id === userObj.user.user_id
+            );
+            
+            return participant && participant.amount > 0
+            ? { ...userObj, isParticipant: true, amount: participant.amount }
+            : { ...userObj, amount: participant ? participant.amount : 0 };
+          })
+        );
       } catch (error) {
         console.error("Error fetching expense details:", error);
       }
     };
   
     fetchExpenseDetails();
-  }, []); 
+  }, [expenseId]);
+  
 
   // Fetch currency
   useEffect(() => {

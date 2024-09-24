@@ -93,7 +93,7 @@ const Groups = () => {
     setLoading(true);
     try {
       const response = await axios.get(`${API_URL}/groups/get-all`);
-      const data = response.data;
+      const data = response.data.rows;
       const groupIds = data.map(group => group.group_id);
       localStorage.setItem('groupIds', JSON.stringify(groupIds));
       setGroups(data);
@@ -122,12 +122,6 @@ const Groups = () => {
                   className="bg-primary-200 text-white font-semibold py-2 px-3 rounded hover:bg-purple-600 transition-colors"
                 >
                   Create
-                </button>
-                <button
-                  onClick={getAllGroups}
-                  className="bg-green-600 text-white font-semibold py-2 px-3 rounded hover:bg-green-700 transition-colors"
-                >
-                  Get All
                 </button>
               </div>
             </div>
