@@ -17,7 +17,10 @@
 - [ ] adding a slider for expense amount(for nibba)
 
 #### ASAP
+
 - [ ] Name change cache issue - Group Settings Page
+- [ ] create group button needs to not take any more clicks after one press ( bug leading to multiple group creation in the time to redirect to expenses)
+- [ ] group navbar doesen't have highlight for active group
 - [x] update footer
 - [x] check only the involved participants under "Paid For" - Edit Expense Page
 - [x] recently created expenses should show up first
