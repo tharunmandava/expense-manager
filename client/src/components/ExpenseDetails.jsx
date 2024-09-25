@@ -18,6 +18,7 @@ const ExpenseDetails = () => {
   const [expenseDescription, setExpenseDescription] = useState("");
   const [isAnyParticipantChecked, setIsAnyParticipantChecked] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -42,21 +43,19 @@ const ExpenseDetails = () => {
       try {
         const response = await axios.get(`${API_URL}/expenses/${expenseId}`);
         const { expense, expense_participants } = response.data;
-        
         setPaidBy(expense.paid_by); 
         setAmount(expense.amount);
         setExpenseTitle(expense.title);
         setExpenseDescription(expense.description);
-        console.log(expense_participants)
         setUsersData((prevUsers) =>
           prevUsers.map((userObj) => {
             const participant = expense_participants.find(
               (p) => p.user_id === userObj.user.user_id
             );
             
-            return participant && participant.amount > 0
+            return participant
             ? { ...userObj, isParticipant: true, amount: participant.amount }
-            : { ...userObj, amount: participant ? participant.amount : 0 };
+            : { ...userObj, amount: 0 };
           })
         );
       } catch (error) {
@@ -114,8 +113,9 @@ const ExpenseDetails = () => {
 
     setIsSubmitted(true);
 
-    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked) return;
+    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || isSubmitting) return;
     
+    setIsSubmitting(true);
     await doEvenSplit(usersData, amount, paidBy);
     
     let participantAmounts = {};
@@ -150,18 +150,24 @@ const ExpenseDetails = () => {
       navigate(`/groups/${id}/expenses`);
     } catch (error) {
       console.error("Error adding expense:", error);
+    } finally{
+      setIsSubmitting(false);
     }
   };
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this expense?");
     if (!confirmDelete) return;
+
+    setIsSubmitting(true);
   
     try {
       await axios.delete(`${API_URL}/expenses/${expenseId}`);
       navigate(`/groups/${id}/expenses`);
     } catch (error) {
       console.error("Error deleting expense:", error);
+    } finally{
+      setIsSubmitting(false);
     }
   };
   
@@ -350,6 +356,7 @@ const ExpenseDetails = () => {
           type="submit"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm rounded-md shadow-sm text-white font-semibold bg-[#B065FF] hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={handleSubmit}
+          disabled={isSubmitting}
         >
           Save Changes
         </button>
@@ -365,6 +372,7 @@ const ExpenseDetails = () => {
         <button
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm rounded-md shadow-sm text-white font-semibold bg-red-800 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={handleDelete}
+          disabled={isSubmitting}
         >
           DELETE
         </button>

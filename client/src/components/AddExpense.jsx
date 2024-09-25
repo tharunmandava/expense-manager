@@ -18,6 +18,7 @@ const AddExpense = () => {
   const [expenseDescription, setExpenseDescription] = useState("");
   const [isAnyParticipantChecked, setIsAnyParticipantChecked] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
 
 
@@ -64,11 +65,10 @@ const AddExpense = () => {
     const participantsNumber = usersData.filter(
       (userData) => userData.isParticipant,
     ).length; //count number of participants among users
-    if (participantsNumber === 0 || !paidBy) return;
+    if (participantsNumber === 0) return;
 
     setUsersData((usersData) => {
       const evenSplit = totalAmount / participantsNumber;
-
       const newUsersData = usersData.map((userData) => {
         if (userData.isParticipant) {
           userData.amount = evenSplit;
@@ -85,13 +85,17 @@ const AddExpense = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (isLoading) return;
+
     setIsSubmitted(true);
 
     if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked) return;
+    
+    await doEvenSplit(usersData, amount, paidBy);
 
     let participantAmounts = {};
     usersData.map((userData) => {
-      if (userData.amount !== 0)
+      if (userData.amount !== 0 || paidBy == userData.user.user_id)
         participantAmounts[userData.user.user_id] = userData.amount;
     });
 
@@ -103,6 +107,8 @@ const AddExpense = () => {
         participantAmounts: participantAmounts,
       })}`,
     );
+
+    setLoading(true);
     try {
       if (paidBy === -1) throw new Error("Invalid payer.");
 
@@ -117,6 +123,8 @@ const AddExpense = () => {
       navigate(`/groups/${id}/expenses`);
     } catch (error) {
       console.error("Error adding expense:", error);
+    } finally{
+      setLoading(false);
     }
   };
 
@@ -304,8 +312,9 @@ const AddExpense = () => {
           type="submit"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm  rounded-md shadow-sm  text-white font-semibold bg-[#B065FF] hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={handleSubmit}
+          disabled={isLoading}
         >
-          Add Expense
+          {isLoading ? 'Adding Expense...' : 'Add Expense'}
         </button>
         <button
           type="button"

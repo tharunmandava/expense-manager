@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useParams } from "react-router-dom";
-import { FaShareAlt, FaCheckCircle, FaCopy } from "react-icons/fa";
+import { FaCheckCircle, FaCopy } from "react-icons/fa";
 import { PiShareFatLight } from "react-icons/pi";
 import axios from "axios";
 import ClipboardJS from 'clipboard';
@@ -8,14 +8,18 @@ import ClipboardJS from 'clipboard';
 // Cache object to store group names
 const groupNameCache = {};
 
-const ManageNavBar = ({ backgroundColor = "gray-800", textColor = "white", activeColor = "gold" }) => {
+const ManageNavBar = () => {
   const { id } = useParams();
-  const [showTick, setShowTick] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [copied, setCopied] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
   const dropdownRef = useRef(null);
+
+  const linkClass = ({ isActive }) =>
+    isActive
+      ? "text-yellow-500 bg-black hover:text-white rounded-md px-3 py-2"
+      : "text-[#B065FF] hover:text-white rounded-md px-3 py-2";
 
   useEffect(() => {
     const fetchGroupName = async () => {
@@ -86,14 +90,12 @@ const ManageNavBar = ({ backgroundColor = "gray-800", textColor = "white", activ
       )}
 
       <div className="flex items-center justify-between flex-nowrap">
-        <nav className={`bg-${backgroundColor} p-4 rounded-md shadow-lg flex flex-row items-center justify-between flex-nowrap`}>
+        <nav className={`bg-gray-800 p-4 rounded-md shadow-lg flex flex-row items-center justify-between flex-nowrap`}>
           <ul className="flex flex-row gap-4 sm:gap-8">
             <li>
               <NavLink
                 to={`/groups/${id}/expenses`}
-                className={({ isActive }) =>
-                  isActive ? `text-${activeColor}` : `text-${textColor}`
-                }
+                className={linkClass}
               >
                 Expenses
               </NavLink>
@@ -101,9 +103,7 @@ const ManageNavBar = ({ backgroundColor = "gray-800", textColor = "white", activ
             <li>
               <NavLink
                 to={`/groups/${id}/balances`}
-                className={({ isActive }) =>
-                  isActive ? `text-${activeColor}` : `text-${textColor}`
-                }
+                className={linkClass}
               >
                 Balances
               </NavLink>
@@ -111,9 +111,7 @@ const ManageNavBar = ({ backgroundColor = "gray-800", textColor = "white", activ
             <li>
               <NavLink
                 to={`/groups/${id}/more`}
-                className={({ isActive }) =>
-                  isActive ? `text-${activeColor}` : `text-${textColor}`
-                }
+                className={linkClass}
               >
                 More
               </NavLink>
@@ -121,9 +119,7 @@ const ManageNavBar = ({ backgroundColor = "gray-800", textColor = "white", activ
             <li>
               <NavLink
                 to={`/groups/${id}/settings`}
-                className={({ isActive }) =>
-                  isActive ? `text-${activeColor}` : `text-${textColor}`
-                }
+                className={linkClass}
               >
                 Settings
               </NavLink>
@@ -136,7 +132,7 @@ const ManageNavBar = ({ backgroundColor = "gray-800", textColor = "white", activ
             onClick={handleShareClick}
             className={`bg-gray-700 text-white rounded-md p-4 shadow-lg flex items-center justify-center w-12 h-12`}
           >
-            {showTick ? <FaCheckCircle className="text-green-500" /> : <PiShareFatLight />}
+            <PiShareFatLight />
           </button>
 
           {showDropdown && (

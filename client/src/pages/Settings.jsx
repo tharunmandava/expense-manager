@@ -9,6 +9,8 @@ const Settings = () => {
   const [description, setDescription] = useState("");
   const [members, setMembers] = useState([""]);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
   const { id } = useParams();
@@ -52,8 +54,9 @@ const Settings = () => {
 
     setIsSubmitted(true);
 
-    if (name == "" || currency == "" || name.length > 255 || currency.length > 5) return;
+    if (name == "" || currency == "" || name.length > 255 || currency.length > 5 || isSubmitting) return;
 
+    setIsSubmitting(true);
     const hasEmptyMembers = members.some(member => member.trim() === "" || member.length > 255);
     
 
@@ -75,6 +78,8 @@ const Settings = () => {
       navigate(`/groups/${id}/expenses`);
     } catch (error) {
       console.error("Error creating group:", error);
+    } finally{
+      setIsSubmitting(false);
     }
   };
 
@@ -83,7 +88,7 @@ const Settings = () => {
   
     if (window.confirm("Are you sure you want to delete this group?")) {
       try {
-
+        setIsSubmitting(true);
         // Remove the group from localStorage
         const groups = JSON.parse(localStorage.getItem('groupIds')) || [];
         const updatedGroups = groups.filter(groupId => groupId !== id);
@@ -95,6 +100,8 @@ const Settings = () => {
         navigate('/groups');
       } catch (error) {
         console.error("Error deleting group:", error);
+      } finally{
+        setIsSubmitting(false);
       }
     }
   };
@@ -218,6 +225,7 @@ const Settings = () => {
           type="submit"
           className="bg-blue-500 text-white font-semibold py-2 px-4 rounded hover:bg-blue-600 transition-colors"
           onClick={handleSubmit}
+          disabled={isSubmitting}
         >
           Save Group Changes
         </button>
@@ -225,6 +233,7 @@ const Settings = () => {
           type="submit"
           className="bg-red-500 text-white font-semibold py-2 px-4 rounded hover:bg-red-600 transition-colors"
           onClick={handleDelete}
+          disabled={isSubmitting}
         >
           Delete Group
         </button>
