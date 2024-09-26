@@ -120,7 +120,7 @@ const ExpenseDetails = () => {
     
     let participantAmounts = {};
     usersData.map((userData) => {
-      if (userData.amount)
+      if (userData.amount > 0 || paidBy == userData.user.user_id && userData.amount != -amount)
         participantAmounts[userData.user.user_id] = userData.amount;
     });
     

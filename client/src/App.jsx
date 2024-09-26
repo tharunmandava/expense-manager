@@ -16,11 +16,18 @@ import CreateGroup from "./components/CreateGroup";
 import Groups from "./pages/Groups";
 import Settings from "./pages/Settings";
 import FetchAndStore from "./layouts/FetchAndStore";
+import ScrollToTop from "./components/ScrollToTop";
+
+
 
 function App() {
+  
+
   const router = createBrowserRouter(
     createRoutesFromElements(
+      
       <Route path="/" element={<MainLayout />}>
+        
         <Route index element={<HomePage />} />
         <Route path="groups" element={<Groups />} />
         <Route path="groups/create" element={<CreateGroup />} />

@@ -74,8 +74,9 @@ const Settings = () => {
         members: members,
       });
       console.log("Group created:", response.data);
-      const groupId = response.data.id;
+      
       navigate(`/groups/${id}/expenses`);
+      window.location.reload();
     } catch (error) {
       console.error("Error creating group:", error);
     } finally{

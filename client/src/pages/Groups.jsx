@@ -79,6 +79,8 @@ const Groups = () => {
     navigate('create');
   };
 
+  
+
   const handleDeleteGroupLocally = (groupId) => {
     setGroups(prevGroups => {
       const updatedGroups = prevGroups.filter(group => group.group_id !== groupId);
@@ -114,8 +116,8 @@ const Groups = () => {
       <div className="flex-grow">
         <div className='flex justify-center p-1'>
           <div className="rounded-lg pt-4 mb-0 max-w-3xl w-full">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4">
-              <h2 className="text-xl font-bold mb-4 sm:mb-0">Groups</h2>
+            <div className="flex justify-between mb-4">
+              <h2 className="text-xl font-bold mt-2">Groups</h2>
               <div className="flex flex-wrap gap-2 sm:gap-2">
                 <button
                   onClick={handleCreateGroupClick}

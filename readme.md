@@ -18,7 +18,7 @@
 
 #### ASAP
 
-- [ ] Name change cache issue - Group Settings Page
+- [x] Name change cache issue - Group Settings Page
 - [x] Submit/Save/Delete buttons should only be pressable once
 - [x] group navbar doesen't have highlight for active group
 - [x] update footer
