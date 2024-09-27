@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Switch } from "antd";
 import "../styles/inputfix.css";
 
 const ExpenseDetails = () => {

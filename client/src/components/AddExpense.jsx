@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Descriptions, Switch } from "antd";
 import "../styles/inputfix.css";
 
 const AddExpense = () => {
@@ -19,7 +18,6 @@ const AddExpense = () => {
   const [isAnyParticipantChecked, setIsAnyParticipantChecked] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setLoading] = useState(false);
-
 
 
 
@@ -128,6 +126,10 @@ const AddExpense = () => {
     }
   };
 
+  const handleToggle = () => {
+    setIsAdvancedSplit(!isAdvancedSplit);
+  }
+
   return (
     <div className="flex flex-col items-center min-h-screenpy-4 p-4">
       {/* Green Section - Form */}
@@ -210,6 +212,7 @@ const AddExpense = () => {
             <input
               type="number"
               value={amount}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => {
                 setAmount(e.target.value);
                 doEvenSplit(usersData, e.target.value, paidBy);
@@ -226,19 +229,14 @@ const AddExpense = () => {
           <div className="flex items-center space-x-5 mt-4">
             <div className="flex flex-col items-start space-y-1 mt-4">
               <div className="flex items-center space-x-4">
-                <span className="text-sm font-semibold text-white">
+              <label class="inline-flex items-center cursor-pointer">
+                <span className="text-sm font-semibold text-white mr-2">
                   Advanced split
                 </span>
-                <Switch
-                  disabled
-                  checked={isAdvancedSplit}
-                  onChange={(e) => {
-                    console.log("handletoggleadvancedsplit");
-                  }}
-                  className="mt-1"
-                />
+                  <input type="checkbox" class="sr-only peer" onChange={handleToggle}/>
+                  <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+                </label>
               </div>
-              <span className="text-xs text-gray-400">Coming soon!</span>
             </div>
           </div>
         </form>
@@ -285,17 +283,19 @@ const AddExpense = () => {
 
             
 
-            {/*
+            
             {isAdvancedSplit &&
-              participants.some((p) => p.user_id === user.user_id) && (
-                <input
-                  type="number"
-                  value={participantAmounts[user.user_id] || 0}
-                  onChange={(e) => console.log("handleparticipantchange")}
-                  className="ml-2 border border-blue-300 rounded-md w-20"
-                />
-              )}
-            */}
+              
+              
+              <input
+                type="number"
+                onFocus={(e) => e.target.select()}
+                className={`mt-1 ml-4 h-8 w-36 px-3 py-2 border ${isSubmitted && amount <=  0 ? 'border-red-500' : 'border-gray-700'} rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
+                required
+              />
+            
+            }
+           
             
           </div>
 

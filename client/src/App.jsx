@@ -27,7 +27,6 @@ function App() {
     createRoutesFromElements(
       
       <Route path="/" element={<MainLayout />}>
-        
         <Route index element={<HomePage />} />
         <Route path="groups" element={<Groups />} />
         <Route path="groups/create" element={<CreateGroup />} />
