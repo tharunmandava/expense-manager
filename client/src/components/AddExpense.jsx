@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/inputfix.css";
+import ToggleSwitch from "./ToggleSwitch";
 
 const AddExpense = () => {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -39,6 +40,13 @@ const AddExpense = () => {
     fetchUsers();
   }, []);
 
+  // Set amount to 0 when adv split is enabled
+  useEffect(() => {
+    if (isAdvancedSplit) {
+      setAmount(0);
+    }
+  }, [isAdvancedSplit]);
+
   // Fetch currency
   useEffect(() => {
     const fetchCurrency = async () => {
@@ -59,11 +67,10 @@ const AddExpense = () => {
     doEvenSplit(usersData, amount, paidBy);
   }, [usersData, amount, paidBy]);
 */
-  const doEvenSplit = (usersData, totalAmount, paidBy) => {
+  const doEvenSplit = async (usersData, totalAmount, paidBy) => {
     const participantsNumber = usersData.filter(
       (userData) => userData.isParticipant,
     ).length; //count number of participants among users
-    if (participantsNumber === 0) return;
 
     setUsersData((usersData) => {
       const evenSplit = totalAmount / participantsNumber;
@@ -80,6 +87,18 @@ const AddExpense = () => {
     });
   };
 
+  const doAdvSplit = async (usersData, totalAmount, paidBy) => {
+
+    setUsersData((usersData) => {
+      
+      const newUsersData = usersData.map((userData) => {
+        if (userData.user.user_id === paidBy) userData.amount -= totalAmount;
+        return userData;
+      });
+      return newUsersData;
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -87,9 +106,10 @@ const AddExpense = () => {
 
     setIsSubmitted(true);
 
-    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked) return;
+    const hasInvalidUserAmount = usersData.some(userData => userData.isParticipant && userData.amount <= 0);
+    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || hasInvalidUserAmount) return;
     
-    await doEvenSplit(usersData, amount, paidBy);
+    isAdvancedSplit ? await doAdvSplit(usersData, amount, paidBy) : await doEvenSplit(usersData, amount, paidBy);
 
     let participantAmounts = {};
     usersData.map((userData) => {
@@ -129,6 +149,16 @@ const AddExpense = () => {
   const handleToggle = () => {
     setIsAdvancedSplit(!isAdvancedSplit);
   }
+
+  const calculateTotalAmount = (usersData) => {
+    const totalAmount = usersData
+    .filter((user) => user.isParticipant)
+    .reduce((sum, user) => sum + (user.amount || 0), 0);
+
+    if (totalAmount){
+      setAmount(totalAmount);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center min-h-screenpy-4 p-4">
@@ -183,8 +213,7 @@ const AddExpense = () => {
             <select
               value={paidBy}
               onChange={(e) => {
-                setPaidBy(e.target.value);
-                doEvenSplit(usersData, amount, e.target.value);
+                setPaidBy(e.target.value)
               }}
               className={`mt-1 block w-full px-3 py-2 border ${
                 isSubmitted && paidBy == -1 ? "border-red-500" : "border-gray-700"
@@ -212,12 +241,13 @@ const AddExpense = () => {
             <input
               type="number"
               value={amount}
+              disabled={isAdvancedSplit}
               onFocus={(e) => e.target.select()}
               onChange={(e) => {
                 setAmount(e.target.value);
-                doEvenSplit(usersData, e.target.value, paidBy);
               }}
-              className={`mt-1 block w-full px-3 py-2 border ${isSubmitted && amount <=  0 ? 'border-red-500' : 'border-gray-700'} rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
+              className={`mt-1 block w-full px-3 py-2 border ${isSubmitted && amount <=  0 ? 'border-red-500' : 'border-gray-700'} rounded-md 
+              ${isAdvancedSplit ? 'bg-gray-600 cursor-not-allowed' : 'bg-black cursor-default'} text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
               required
             />
           </label>
@@ -229,13 +259,11 @@ const AddExpense = () => {
           <div className="flex items-center space-x-5 mt-4">
             <div className="flex flex-col items-start space-y-1 mt-4">
               <div className="flex items-center space-x-4">
-              <label class="inline-flex items-center cursor-pointer">
-                <span className="text-sm font-semibold text-white mr-2">
-                  Advanced split
-                </span>
-                  <input type="checkbox" class="sr-only peer" onChange={handleToggle}/>
-                  <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                </label>
+              <ToggleSwitch 
+                label = "Advanced Split"
+                isChecked={isAdvancedSplit}
+                onChange={handleToggle}
+              />
               </div>
             </div>
           </div>
@@ -261,46 +289,62 @@ const AddExpense = () => {
                     return {
                       ...userData,
                       isParticipant: e.target.checked,
+                      amount: !e.target.checked ? 0 : userData.amount,
                     };
                   }
                   return userData;
                 });
                 setUsersData(updatedUsersData);
-                
-                // Update the state to check if any participant is selected
-                setIsAnyParticipantChecked(updatedUsersData.some(user => user.isParticipant));
-                doEvenSplit(updatedUsersData, amount, paidBy);
+
+                calculateTotalAmount(updatedUsersData);
+
+                setIsAnyParticipantChecked(
+                  updatedUsersData.some((user) => user.isParticipant)
+                );
+
               }}
+
               checked={userData.isParticipant}
               className="mr-2"
             />
             <label
               htmlFor={`participant-${userData.user.user_id}`}
-              className={`font-bold ${!isAnyParticipantChecked ? ' text-red-500' : 'text-white'}`}
+              className={`font-bold ${
+                !isAnyParticipantChecked ? " text-red-500" : "text-white"
+              }`}
             >
               {userData.user.user_name}
             </label>
 
-            
-
-            
-            {isAdvancedSplit &&
-              
-              
+            {isAdvancedSplit && userData.isParticipant && (
               <input
                 type="number"
+                value={userData.amount || 0}
                 onFocus={(e) => e.target.select()}
-                className={`mt-1 ml-4 h-8 w-36 px-3 py-2 border ${isSubmitted && amount <=  0 ? 'border-red-500' : 'border-gray-700'} rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
+                onChange={(e) => {
+                  const updatedUsersData = usersData.map((userData, i) => {
+                    if (i === index) {
+                      return {
+                        ...userData,
+                        amount: parseFloat(e.target.value) || 0,
+                      };
+                    }
+                    return userData;
+                  });
+                  setUsersData(updatedUsersData);
+
+                  calculateTotalAmount(updatedUsersData);
+                }}
+                className={`mt-1 ml-4 h-8 w-36 px-3 py-2 border ${
+                  isSubmitted && userData.amount <= 0 ? "border-red-500" : "border-gray-700"
+                } rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
                 required
               />
-            
-            }
-           
-            
+            )}
           </div>
-
-          
         ))}
+
+
        {!isAnyParticipantChecked && (
               <p className="text-red-500 mt-2">The expense must be paid for at least one participant.</p>
        )} 
