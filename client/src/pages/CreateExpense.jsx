@@ -2,9 +2,9 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/inputfix.css";
-import ToggleSwitch from "./ToggleSwitch";
+import ToggleSwitch from "../components/ToggleSwitch";
 
-const AddExpense = () => {
+const CreateExpense = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const { id } = useParams();
@@ -19,8 +19,6 @@ const AddExpense = () => {
   const [isAnyParticipantChecked, setIsAnyParticipantChecked] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setLoading] = useState(false);
-
-
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -40,11 +38,16 @@ const AddExpense = () => {
     fetchUsers();
   }, []);
 
-  // Set amount to 0 when adv split is enabled
+  // set amounts to 0
   useEffect(() => {
-    if (isAdvancedSplit) {
-      setAmount(0);
-    }
+    setAmount(0);
+    const updatedUsersData = usersData.map((userData) => {
+        return {
+          ...userData,
+          amount: 0,
+        };
+    });
+    setUsersData(updatedUsersData);
   }, [isAdvancedSplit]);
 
   // Fetch currency
@@ -62,11 +65,6 @@ const AddExpense = () => {
     fetchCurrency();
   }, []);
 
-  /*
-  useEffect(() => {
-    doEvenSplit(usersData, amount, paidBy);
-  }, [usersData, amount, paidBy]);
-*/
   const doEvenSplit = async (usersData, totalAmount, paidBy) => {
     const participantsNumber = usersData.filter(
       (userData) => userData.isParticipant,
@@ -109,7 +107,11 @@ const AddExpense = () => {
     const hasInvalidUserAmount = usersData.some(userData => userData.isParticipant && userData.amount <= 0);
     if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || isAdvancedSplit && hasInvalidUserAmount) return;
     
-    isAdvancedSplit ? await doAdvSplit(usersData, amount, paidBy) : await doEvenSplit(usersData, amount, paidBy);
+    if (isAdvancedSplit) {
+      await doAdvSplit(usersData, amount, paidBy);
+    } else {
+      await doEvenSplit(usersData, amount, paidBy);
+    }
 
     let participantAmounts = {};
     usersData.map((userData) => {
@@ -138,6 +140,12 @@ const AddExpense = () => {
         group_id: id,
         participantAmounts: participantAmounts,
       });
+
+      const response = await axios.get(`${API_URL}/expenses/by-group/${id}`);
+      const expenseId = response.data[0].expense_id
+      
+      localStorage.setItem(expenseId, isAdvancedSplit);
+
       navigate(`/groups/${id}/expenses`);
     } catch (error) {
       console.error("Error adding expense:", error);
@@ -372,4 +380,4 @@ const AddExpense = () => {
   );
 };
 
-export default AddExpense;
+export default CreateExpense;

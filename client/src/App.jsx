@@ -10,13 +10,12 @@ import Expenses from "./pages/Expenses";
 import Balances from "./pages/Balances";
 import More from "./pages/More";
 import Filler from "./pages/Filler";
-import ExpenseDetails from "./components/ExpenseDetails";
-import AddExpense from "./components/AddExpense";
-import CreateGroup from "./components/CreateGroup";
+import EditExpense from "./pages/EditExpense";
+import CreateExpense from "./pages/CreateExpense";
+import CreateGroup from "./pages/CreateGroup";
 import Groups from "./pages/Groups";
 import Settings from "./pages/Settings";
 import FetchAndStore from "./layouts/FetchAndStore";
-import ScrollToTop from "./components/ScrollToTop";
 
 
 
@@ -34,8 +33,8 @@ function App() {
         {/* Group-specific routes */}
         <Route path="groups/:id" element={<FetchAndStore />}>
           <Route path="expenses" element={<Expenses />} />
-          <Route path="expenses/add" element={<AddExpense />} />
-          <Route path="expenses/:expenseId/edit" element={<ExpenseDetails />} />
+          <Route path="expenses/add" element={<CreateExpense />} />
+          <Route path="expenses/:expenseId/edit" element={<EditExpense />} />
           <Route path="balances" element={<Balances />} />
           <Route path="more" element={<More />} />
           <Route path="settings" element={<Settings />} />

@@ -2,8 +2,9 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/inputfix.css";
+import ToggleSwitch from "../components/ToggleSwitch";
 
-const ExpenseDetails = () => {
+const EditExpense = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const { id, expenseId } = useParams();
@@ -12,13 +13,14 @@ const ExpenseDetails = () => {
   const [amount, setAmount] = useState(0);
   const [paidBy, setPaidBy] = useState(-1);
   const [groupCurrency, setGroupCurrency] = useState("");
-  const [isAdvancedSplit, setIsAdvancedSplit] = useState(false);
+  const [isAdvancedSplit, setIsAdvancedSplit] = useState(localStorage.getItem(`${expenseId}`) === 'true');
   const [expenseTitle, setExpenseTitle] = useState("");
   const [expenseDescription, setExpenseDescription] = useState("");
   const [isAnyParticipantChecked, setIsAnyParticipantChecked] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -42,19 +44,30 @@ const ExpenseDetails = () => {
       try {
         const response = await axios.get(`${API_URL}/expenses/${expenseId}`);
         const { expense, expense_participants } = response.data;
-        setPaidBy(expense.paid_by); 
+  
+        setPaidBy(expense.paid_by);
         setAmount(expense.amount);
         setExpenseTitle(expense.title);
         setExpenseDescription(expense.description);
+        
+  
         setUsersData((prevUsers) =>
           prevUsers.map((userObj) => {
             const participant = expense_participants.find(
               (p) => p.user_id === userObj.user.user_id
             );
-            
-            return participant
-            ? { ...userObj, isParticipant: true, amount: participant.amount }
-            : { ...userObj, amount: 0 };
+  
+            if (participant) {
+              // If the user is a participant, set their amount based on the participant data
+              return {
+                ...userObj,
+                isParticipant: true,
+                amount: parseFloat(participant.amount) + (userObj.user.user_id === expense.paid_by ? parseFloat(expense.amount) : 0) // Add the expense amount if this user is the one who paid
+              };
+            } else {
+              // If the user is not a participant, set amount to 0
+              return { ...userObj, amount: 0 };
+            }
           })
         );
       } catch (error) {
@@ -65,6 +78,19 @@ const ExpenseDetails = () => {
     fetchExpenseDetails();
   }, [expenseId]);
   
+
+
+  // set amounts to 0
+  useEffect(() => {
+    setAmount(0);
+    const updatedUsersData = usersData.map((userData) => {
+        return {
+          ...userData,
+          amount: 0,
+        };
+    });
+    setUsersData(updatedUsersData);
+  }, [isAdvancedSplit]);
 
   // Fetch currency
   useEffect(() => {
@@ -81,16 +107,11 @@ const ExpenseDetails = () => {
     fetchCurrency();
   }, []);
 
-  /*
-  useEffect(() => {
-    doEvenSplit(usersData, amount, paidBy);
-  }, [usersData, amount, paidBy]);
-*/
-  const doEvenSplit = (usersData, totalAmount, paidBy) => {
+
+  const doEvenSplit = async (usersData, totalAmount, paidBy) => {
     const participantsNumber = usersData.filter(
       (userData) => userData.isParticipant,
     ).length; //count number of participants among users
-    if (participantsNumber === 0 || !paidBy) return;
 
     setUsersData((usersData) => {
       const evenSplit = totalAmount / participantsNumber;
@@ -107,51 +128,16 @@ const ExpenseDetails = () => {
     });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const doAdvSplit = async (usersData, totalAmount, paidBy) => {
 
-    setIsSubmitted(true);
-
-    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || isSubmitting) return;
-    
-    setIsSubmitting(true);
-    await doEvenSplit(usersData, amount, paidBy);
-    
-    let participantAmounts = {};
-    usersData.map((userData) => {
-      if (userData.amount > 0 || paidBy == userData.user.user_id && userData.amount != -amount)
-        participantAmounts[userData.user.user_id] = userData.amount;
-    });
-    
-
-    console.log(
-      `submit ${JSON.stringify({
-        title: expenseTitle,
-        description: expenseDescription,
-        amount: Number(amount),
-        paid_by: paidBy,
-        group_id: id,
-        participantAmounts: participantAmounts,
-      })}`,
-    );
-    
-    try {
-      if (paidBy === -1) throw new Error("Invalid payer.");
-
-      await axios.put(`${API_URL}/expenses/${expenseId}`, {
-        title: expenseTitle,
-        description: expenseDescription,
-        amount: Number(amount),
-        paid_by: paidBy,
-        group_id: id,
-        participantAmounts: participantAmounts,
+    setUsersData((usersData) => {
+      
+      const newUsersData = usersData.map((userData) => {
+        if (userData.user.user_id === paidBy) userData.amount -= totalAmount;
+        return userData;
       });
-      navigate(`/groups/${id}/expenses`);
-    } catch (error) {
-      console.error("Error adding expense:", error);
-    } finally{
-      setIsSubmitting(false);
-    }
+      return newUsersData;
+    });
   };
 
   const handleDelete = async () => {
@@ -169,7 +155,74 @@ const ExpenseDetails = () => {
       setIsSubmitting(false);
     }
   };
-  
+
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (isLoading) return;
+
+    setIsSubmitted(true);
+    
+    const hasInvalidUserAmount = usersData.some(userData => userData.isParticipant && userData.amount <= 0);
+    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || isAdvancedSplit && hasInvalidUserAmount) return;
+
+    if (isAdvancedSplit) {
+      await doAdvSplit(usersData, amount, paidBy);
+      localStorage.setItem(`isAdvancedSplit_${expenseId}`, true);
+    } else {
+      await doEvenSplit(usersData, amount, paidBy);
+      localStorage.setItem(`isAdvancedSplit_${expenseId}`, false);
+    }
+
+    let participantAmounts = {};
+    usersData.map((userData) => {
+      if (userData.amount > 0 || paidBy == userData.user.user_id && userData.amount != -amount)
+        participantAmounts[userData.user.user_id] = userData.amount;
+    });
+
+    console.log(
+      `submit ${JSON.stringify({
+        amount: Number(amount),
+        paid_by: paidBy,
+        group_id: id,
+        participantAmounts: participantAmounts,
+      })}`,
+    );
+
+    setLoading(true);
+    try {
+      if (paidBy === -1) throw new Error("Invalid payer.");
+
+      await axios.put(`${API_URL}/expenses/${expenseId}`, {
+        title: expenseTitle,
+        description: expenseDescription,
+        amount: Number(amount),
+        paid_by: paidBy,
+        group_id: id,
+        participantAmounts: participantAmounts,
+      });
+      navigate(`/groups/${id}/expenses`);
+    } catch (error) {
+      console.error("Error adding expense:", error);
+    } finally{
+      setLoading(false);
+    }
+  };
+
+  const handleToggle = () => {
+    setIsAdvancedSplit(!isAdvancedSplit);
+  }
+
+  const calculateTotalAmount = (usersData) => {
+    const totalAmount = usersData
+    .filter((user) => user.isParticipant)
+    .reduce((sum, user) => sum + (user.amount || 0), 0);
+
+    if (totalAmount){
+      setAmount(totalAmount);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center min-h-screenpy-4 p-4">
@@ -224,8 +277,7 @@ const ExpenseDetails = () => {
             <select
               value={paidBy}
               onChange={(e) => {
-                setPaidBy(e.target.value);
-                doEvenSplit(usersData, amount, e.target.value);
+                setPaidBy(e.target.value)
               }}
               className={`mt-1 block w-full px-3 py-2 border ${
                 isSubmitted && paidBy == -1 ? "border-red-500" : "border-gray-700"
@@ -253,11 +305,13 @@ const ExpenseDetails = () => {
             <input
               type="number"
               value={amount}
+              disabled={isAdvancedSplit}
+              onFocus={(e) => e.target.select()}
               onChange={(e) => {
                 setAmount(e.target.value);
-                doEvenSplit(usersData, e.target.value, paidBy);
               }}
-              className={`mt-1 block w-full px-3 py-2 border ${isSubmitted && amount <=  0 ? 'border-red-500' : 'border-gray-700'} rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
+              className={`mt-1 block w-full px-3 py-2 border ${isSubmitted && amount <=  0 ? 'border-red-500' : 'border-gray-700'} rounded-md 
+              ${isAdvancedSplit ? 'bg-gray-600 cursor-not-allowed' : 'bg-black cursor-default'} text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
               required
             />
           </label>
@@ -269,19 +323,12 @@ const ExpenseDetails = () => {
           <div className="flex items-center space-x-5 mt-4">
             <div className="flex flex-col items-start space-y-1 mt-4">
               <div className="flex items-center space-x-4">
-                <span className="text-sm font-semibold text-white">
-                  Advanced split
-                </span>
-                <Switch
-                  disabled
-                  checked={isAdvancedSplit}
-                  onChange={(e) => {
-                    console.log("handletoggleadvancedsplit");
-                  }}
-                  className="mt-1"
-                />
+              <ToggleSwitch 
+                label = "Advanced Split"
+                isChecked={isAdvancedSplit}
+                onChange={handleToggle}
+              />
               </div>
-              <span className="text-xs text-gray-400">Coming soon!</span>
             </div>
           </div>
         </form>
@@ -306,44 +353,62 @@ const ExpenseDetails = () => {
                     return {
                       ...userData,
                       isParticipant: e.target.checked,
+                      amount: !e.target.checked ? 0 : userData.amount,
                     };
                   }
                   return userData;
                 });
                 setUsersData(updatedUsersData);
-                
-                // Update the state to check if any participant is selected
-                setIsAnyParticipantChecked(updatedUsersData.some(user => user.isParticipant));
-                doEvenSplit(updatedUsersData, amount, paidBy);
+
+                calculateTotalAmount(updatedUsersData);
+
+                setIsAnyParticipantChecked(
+                  updatedUsersData.some((user) => user.isParticipant)
+                );
+
               }}
+
               checked={userData.isParticipant}
               className="mr-2"
             />
             <label
               htmlFor={`participant-${userData.user.user_id}`}
-              className={`font-bold ${!isAnyParticipantChecked ? ' text-red-500' : 'text-white'}`}
+              className={`font-bold ${
+                !isAnyParticipantChecked ? " text-red-500" : "text-white"
+              }`}
             >
               {userData.user.user_name}
             </label>
 
-            
+            {isAdvancedSplit && userData.isParticipant && !isLoading && (
+              <input
+                type="number"
+                value={userData.amount || 0}
+                onFocus={(e) => e.target.select()}
+                onChange={(e) => {
+                  const updatedUsersData = usersData.map((userData, i) => {
+                    if (i === index) {
+                      return {
+                        ...userData,
+                        amount: parseFloat(e.target.value) || 0,
+                      };
+                    }
+                    return userData;
+                  });
+                  setUsersData(updatedUsersData);
 
-            {/*
-            {isAdvancedSplit &&
-              participants.some((p) => p.user_id === user.user_id) && (
-                <input
-                  type="number"
-                  value={participantAmounts[user.user_id] || 0}
-                  onChange={(e) => console.log("handleparticipantchange")}
-                  className="ml-2 border border-blue-300 rounded-md w-20"
-                />
-              )}
-            */}
-            
+                  calculateTotalAmount(updatedUsersData);
+                }}
+                className={`mt-1 ml-4 h-8 w-36 px-3 py-2 border ${
+                  isSubmitted && userData.amount <= 0 ? "border-red-500" : "border-gray-700"
+                } rounded-md bg-black text-white focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
+                required
+              />
+            )}
           </div>
-
-          
         ))}
+
+
        {!isAnyParticipantChecked && (
               <p className="text-red-500 mt-2">The expense must be paid for at least one participant.</p>
        )} 
@@ -355,7 +420,7 @@ const ExpenseDetails = () => {
           type="submit"
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm rounded-md shadow-sm text-white font-semibold bg-[#B065FF] hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={handleSubmit}
-          disabled={isSubmitting}
+          disabled={isLoading}
         >
           Save Changes
         </button>
@@ -371,14 +436,13 @@ const ExpenseDetails = () => {
         <button
           className="inline-flex items-center px-4 py-2 border border-transparent text-sm rounded-md shadow-sm text-white font-semibold bg-red-800 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           onClick={handleDelete}
-          disabled={isSubmitting}
-        >
+          disabled={isLoading}
+        > 
           DELETE
         </button>
       </div>
     </div>
-
   );
 };
 
-export default ExpenseDetails;
+export default EditExpense;
