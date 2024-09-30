@@ -101,19 +101,19 @@ const AddExpense = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (isLoading) return;
 
     setIsSubmitted(true);
-
+    
     const hasInvalidUserAmount = usersData.some(userData => userData.isParticipant && userData.amount <= 0);
-    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || hasInvalidUserAmount) return;
+    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || isAdvancedSplit && hasInvalidUserAmount) return;
     
     isAdvancedSplit ? await doAdvSplit(usersData, amount, paidBy) : await doEvenSplit(usersData, amount, paidBy);
 
     let participantAmounts = {};
     usersData.map((userData) => {
-      if (userData.amount !== 0 || paidBy == userData.user.user_id)
+      if (userData.amount > 0 || paidBy == userData.user.user_id && userData.amount != -amount)
         participantAmounts[userData.user.user_id] = userData.amount;
     });
 
@@ -316,7 +316,7 @@ const AddExpense = () => {
               {userData.user.user_name}
             </label>
 
-            {isAdvancedSplit && userData.isParticipant && (
+            {isAdvancedSplit && userData.isParticipant && !isLoading && (
               <input
                 type="number"
                 value={userData.amount || 0}
