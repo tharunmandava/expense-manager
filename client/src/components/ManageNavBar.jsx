@@ -18,8 +18,8 @@ const ManageNavBar = () => {
 
   const linkClass = ({ isActive }) =>
     isActive
-      ? "text-yellow-500 bg-black hover:text-white rounded-md px-3 py-2"
-      : "text-[#B065FF] hover:text-white rounded-md px-3 py-2";
+      ? "text-white bg-black bg-opacity-20 rounded-md px-3 py-2"
+      : "text-[#B065FF] hover:text-gray-200 rounded-md px-3 py-2";
 
   useEffect(() => {
     const fetchGroupName = async () => {
@@ -147,7 +147,7 @@ const ManageNavBar = () => {
               <button
                 onClick={handleCopyClick}
                 data-clipboard-target="#url_text"
-                className="copy-btn w-full flex items-center justify-center bg-blue-500 text-white rounded-md p-2"
+                className="copy-btn w-full flex items-center justify-center bg-primary-200 text-white rounded-md p-2"
               >
                 {copied ? <FaCheckCircle className="mr-2 text-green-500" /> : <FaCopy className="mr-2" />}
                 {copied ? 'Copied!' : 'Copy URL'}

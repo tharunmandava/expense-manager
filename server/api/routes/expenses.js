@@ -35,10 +35,16 @@ router.get("/total-of-group/:id", async (req, res) => {
 
     const totalExpenseQuery = `SELECT SUM (e.amount) AS total_expense FROM expenses e
                                 WHERE e.group_id = $1`;
+    const currencyQuery = `SELECT group_currency FROM groups WHERE group_id = $1`;
 
     const { rows } = await pool.query(totalExpenseQuery, [id]);
+    const result = await pool.query(currencyQuery, [id]);
+    const res2 = result.rows[0];
 
-    res.status(200).json(rows);
+    res.status(200).json({
+      total_expense: rows[0].total_expense,
+      group_currency: res2.group_currency,
+    });
   } catch (error) {
     res.status(500).json({ message: "error getting expenses", error: error });
   }

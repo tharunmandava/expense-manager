@@ -2,22 +2,6 @@
 
 ## To-do
 
-### Client
-
-- [x] Particular expense page leads to create/edit expense(disabled button for now)
-- [x] Create a group page 
-- [x] Create an expense page 
-- [x] Create balances page
-- [x] Settings page
-- [ ] advanced split feature of expenses allowing user to add small expenses in the users field ('100+200' showing the answer 300 directly)
-- [x] share url option 
-- [x] A landing page
-- [x] reverse the - and + in balances page
-
-- [ ] adding a slider for expense amount(for nibba)
-
-#### ASAP
-
 - [x] Name change cache issue - Group Settings Page
 - [x] Submit/Save/Delete buttons should only be pressable once
 - [x] group navbar doesen't have highlight for active group
@@ -41,6 +25,18 @@
 - [x] moving navlinks to the right most corner
 - [x] settings page
 - [x] create drop down for add group by url
+- [x] share url option 
+- [x] A landing page
+- [x] reverse the - and + in balances page
+- [x] Particular expense page leads to create/edit expense(disabled button for now)
+- [x] Create a group page 
+- [x] Create an expense page 
+- [x] Create balances page
+- [x] Settings page
 
+## Maybe
 
-### Server
+- [ ] advanced split feature of expenses allowing user to add small expenses in the users field ('100+200' showing the answer 300 directly)
+
+- [ ] adding a slider for expense amount(secret)
+
