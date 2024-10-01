@@ -9,7 +9,6 @@ import HomePage from "./pages/HomePage";
 import Expenses from "./pages/Expenses";
 import Balances from "./pages/Balances";
 import More from "./pages/More";
-import Filler from "./pages/Filler";
 import EditExpense from "./pages/EditExpense";
 import CreateExpense from "./pages/CreateExpense";
 import CreateGroup from "./pages/CreateGroup";
@@ -39,8 +38,6 @@ function App() {
           <Route path="more" element={<More />} />
           <Route path="settings" element={<Settings />} />
         </Route>
-
-        <Route path="filler" element={<Filler />} />
       </Route>,
     ),
   );

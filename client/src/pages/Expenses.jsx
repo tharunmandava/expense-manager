@@ -41,12 +41,20 @@ const Expenses = () => {
   const fetchExpenseParticipants = async (expenseId) => {
     try {
       const response = await axios.get(`${API_URL}/expenses/${expenseId}`);
-      return response.data.expense_participants;
+      const { expense, expense_participants } = response.data;
+  
+      const matchingParticipants = expense_participants.filter((userData) => {
+        return userData.amount > 0 || 
+               (expense.paid_by == userData.user_id && userData.amount != -expense.amount);
+      });
+  
+      return matchingParticipants;
     } catch (error) {
       console.error("Error fetching expense participants:", error);
       return [];
     }
   };
+  
 
   useEffect(() => {
     const fetchCurrency = async () => {

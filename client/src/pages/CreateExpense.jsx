@@ -105,7 +105,10 @@ const CreateExpense = () => {
     setIsSubmitted(true);
     
     const hasInvalidUserAmount = usersData.some(userData => userData.isParticipant && userData.amount <= 0);
-    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || isAdvancedSplit && hasInvalidUserAmount) return;
+    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || isAdvancedSplit && hasInvalidUserAmount){
+      window.scroll(0, 0);
+      return;
+    } 
     
     if (isAdvancedSplit) {
       await doAdvSplit(usersData, amount, paidBy);
@@ -115,8 +118,7 @@ const CreateExpense = () => {
 
     let participantAmounts = {};
     usersData.map((userData) => {
-      if (userData.amount > 0 || paidBy == userData.user.user_id && userData.amount != -amount)
-        participantAmounts[userData.user.user_id] = userData.amount;
+      participantAmounts[userData.user.user_id] = userData.amount;
     });
 
     console.log(

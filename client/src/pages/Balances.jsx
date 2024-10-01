@@ -14,8 +14,6 @@ const Balances = () => {
   const fetchbalances = async () => {
     try {
       const response = await axios.get(`${API_URL}/groups/balances/${group_url}`);
-      console.log(group_url);
-      console.log(response.data);
       setBalances(response.data);
     } catch (error) {
     }
@@ -37,7 +35,10 @@ const Balances = () => {
         <div className="bg-gray-800 border border-gray-900 rounded-lg p-6 mb-4 max-w-3xl w-full">
           <h1 className="text-2xl font-bold mb-6 text-white">Balances</h1>
           <div className="space-y-4">
-            {balances.map((balance) => (
+            {balances
+            .filter((balance) => balance.total_amount != 0)
+            .map((balance) => (
+               
               <div key={balance.user_id} className="flex justify-between bg-gray-700 border border-gray-600 rounded-lg p-4">
                 <span className="text-white">{balance.user_name}</span>
                 <span className={` ${balance.total_amount < 0 ? 'text-green-500' : 'text-red-500'}`}>

@@ -54,7 +54,10 @@ const Settings = () => {
 
     setIsSubmitted(true);
 
-    if (name == "" || currency == "" || name.length > 255 || currency.length > 5 || isSubmitting) return;
+    if (name.trim() == "" || currency == "" || name.length > 255 || currency.length > 5 || isSubmitting){
+      window.scroll(0, 0);
+      return;
+    }
 
     setIsSubmitting(true);
     const hasEmptyMembers = members.some(member => member.trim() === "" || member.length > 255);
@@ -127,7 +130,7 @@ const Settings = () => {
             <div className="flex-1">
               <label
                 htmlFor="name"
-                className={`block text-sm font-medium ${isSubmitted && name === "" || name.length > 255 ? "text-red-500" : "text-white" }`}
+                className={`block text-sm font-medium ${isSubmitted && name.trim() === "" || name.length > 255 ? "text-red-500" : "text-white" }`}
               >
                 Group Name {name.length > 255 && " (max 255 characters)"}
               </label>
@@ -137,7 +140,7 @@ const Settings = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className={`bg-black mt-1 block w-full px-3 py-2 border ${
-                  isSubmitted && name === "" || name.length > 255 ? "border-red-500" : "border-gray-700"
+                  isSubmitted && name.trim() === "" || name.length > 255 ? "border-red-500" : "border-gray-700"
                 } rounded-md shadow-sm focus:outline-none focus:ring-primary-100 focus:border-primary-100 sm:text-sm`}
                 required
               />

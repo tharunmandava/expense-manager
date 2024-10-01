@@ -1,7 +1,7 @@
 # Expense-Manager
 
 ## To-do
-
+- [ ] API for isAdvancedSplit boolean value - POST/PUT for Create/Edit Expense
 - [x] Name change cache issue - Group Settings Page
 - [x] Submit/Save/Delete buttons should only be pressable once
 - [x] group navbar doesen't have highlight for active group

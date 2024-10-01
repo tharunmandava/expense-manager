@@ -19,55 +19,35 @@ const EditExpense = () => {
   const [isAnyParticipantChecked, setIsAnyParticipantChecked] = useState(true);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isLoading, setLoading] = useState(false);
-
-  
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await axios.get(`${API_URL}/groups/users/${id}`);
-
-        setUsersData(
-          response.data.map((user) => {
-            return { user: user, isParticipant: false, amount: 0 };
-          })
-        );
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      }
-    };
-  
-    fetchUsers();
-  }, [id]);
   
   useEffect(() => {
     const fetchExpenseDetails = async () => {
       try {
-        const response = await axios.get(`${API_URL}/expenses/${expenseId}`);
-        const { expense, expense_participants } = response.data;
+        const response = await axios.get(`${API_URL}/groups/users/${id}`);
+        const users = response.data;
+        
+        const exp = await axios.get(`${API_URL}/expenses/${expenseId}`);
+        const { expense, expense_participants } = exp.data;
   
         setPaidBy(expense.paid_by);
         setAmount(expense.amount);
         setExpenseTitle(expense.title);
         setExpenseDescription(expense.description);
         
-  
-        setUsersData((prevUsers) =>
-          prevUsers.map((userObj) => {
+        
+        setUsersData(
+          users.map((userData) => {
+              
             const participant = expense_participants.find(
-              (p) => p.user_id === userObj.user.user_id
+              (p) => p.user_id === userData.user_id
             );
-  
-            if (participant) {
-              // If the user is a participant, set their amount based on the participant data
-              return {
-                ...userObj,
-                isParticipant: true,
-                amount: parseFloat(participant.amount) + (userObj.user.user_id === expense.paid_by ? parseFloat(expense.amount) : 0) // Add the expense amount if this user is the one who paid
-              };
-            } else {
-              // If the user is not a participant, set amount to 0
-              return { ...userObj, amount: 0 };
-            }
+
+            return {
+              user: userData,
+              isParticipant: participant.amount > 0 || (expense.paid_by == participant.user_id && participant.amount != -expense.amount),
+              amount: parseFloat(participant.amount) + (participant.user_id === expense.paid_by ? parseFloat(expense.amount) : 0)
+            };
+            
           })
         );
       } catch (error) {
@@ -144,7 +124,7 @@ const EditExpense = () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this expense?");
     if (!confirmDelete) return;
 
-    setIsSubmitting(true);
+    setLoading(true);
   
     try {
       await axios.delete(`${API_URL}/expenses/${expenseId}`);
@@ -152,7 +132,7 @@ const EditExpense = () => {
     } catch (error) {
       console.error("Error deleting expense:", error);
     } finally{
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -165,20 +145,20 @@ const EditExpense = () => {
     setIsSubmitted(true);
     
     const hasInvalidUserAmount = usersData.some(userData => userData.isParticipant && userData.amount <= 0);
-    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || isAdvancedSplit && hasInvalidUserAmount) return;
+    if (paidBy == -1 || amount <= 0 || expenseTitle.trim() == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || isAdvancedSplit && hasInvalidUserAmount){
+      window.scroll(0, 0);
+      return;
+    }
 
     if (isAdvancedSplit) {
       await doAdvSplit(usersData, amount, paidBy);
-      localStorage.setItem(`isAdvancedSplit_${expenseId}`, true);
     } else {
       await doEvenSplit(usersData, amount, paidBy);
-      localStorage.setItem(`isAdvancedSplit_${expenseId}`, false);
     }
 
     let participantAmounts = {};
     usersData.map((userData) => {
-      if (userData.amount > 0 || paidBy == userData.user.user_id && userData.amount != -amount)
-        participantAmounts[userData.user.user_id] = userData.amount;
+      participantAmounts[userData.user.user_id] = userData.amount;
     });
 
     console.log(
@@ -233,7 +213,7 @@ const EditExpense = () => {
           <div className="flex space-x-4">
           <label
             className={`block text-sm font-medium ${
-              isSubmitted && expenseTitle == "" || expenseTitle.length > 255 ? "text-red-500" : "text-white"
+              isSubmitted && expenseTitle.trim() == "" || expenseTitle.length > 255 ? "text-red-500" : "text-white"
             } w-1/2`}
           >
             Expense Title {expenseTitle.length > 255 && " (max 255 characters)"}
@@ -245,7 +225,7 @@ const EditExpense = () => {
               }}
               placeholder="Sunday night dinner"
               className={`mt-1 block w-full px-3 py-2 border ${
-                isSubmitted && expenseTitle == "" || expenseTitle.length > 255 ? "border-red-500" : "border-gray-700"
+                isSubmitted && expenseTitle.trim() == "" || expenseTitle.length > 255 ? "border-red-500" : "border-gray-700"
               } rounded-md text-white bg-black focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
               required
             />
@@ -438,7 +418,7 @@ const EditExpense = () => {
           onClick={handleDelete}
           disabled={isLoading}
         > 
-          DELETE
+          Delete
         </button>
       </div>
     </div>
