@@ -7,7 +7,7 @@ const Settings = () => {
   const [name, setName] = useState("");
   const [currency, setCurrency] = useState("");
   const [description, setDescription] = useState("");
-  const [members, setMembers] = useState([""]);
+  const [members, setMembers] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -21,11 +21,10 @@ const Settings = () => {
       try {
         const groupResponse = await axios.get(`${API_URL}/groups/${id}`);
         const membersResponse = await axios.get(`${API_URL}/groups/users/${id}`);
-  
         setName(groupResponse.data.group_name);
         setCurrency(groupResponse.data.group_currency);
         setDescription(groupResponse.data.group_description);
-        setMembers(membersResponse.data.map(member => member.user_name));
+        setMembers(membersResponse.data);
       } catch (error) {
         console.error("Error fetching group or members:", error);
       }
@@ -38,10 +37,24 @@ const Settings = () => {
     setMembers([...members, ""]);
   };
 
-  const handleRemoveMember = (index) => {
-    const newMembers = members.filter((_, i) => i !== index);
-    setMembers(newMembers);
+  const handleRemoveMember = async (index) => {
+    try {
+      const response = await axios.get(`${API_URL}/groups/balances/${id}`);
+      const users = response.data;
+      
+      const userBalance = users.find((user) => user.user_id === members[index].user_id);
+      console.log(members[index])
+      if (userBalance.total_amount != 0) {
+        window.alert("Cannot remove this member as they have an outstanding balance.");
+      } else {
+        const newMembers = members.filter((_, i) => i !== index);
+        setMembers(newMembers);
+      }
+    } catch (error) {
+      console.error("Error fetching balances or removing member:", error);
+    }
   };
+  
 
   const handleMemberChange = (index, value) => {
     const newMembers = [...members];
@@ -60,7 +73,7 @@ const Settings = () => {
     }
 
     setIsSubmitting(true);
-    const hasEmptyMembers = members.some(member => member.trim() === "" || member.length > 255);
+    const hasEmptyMembers = members.some(member => member.user_name.trim() === "" || member.length > 255);
     
 
     if(hasEmptyMembers){
@@ -198,7 +211,7 @@ const Settings = () => {
             <div key={index} className="flex items-center space-x-2 mb-2">
               <input
                 type="text"
-                value={member}
+                value={member.user_name}
                 onChange={(e) => handleMemberChange(index, e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border border-gray-700 bg-black rounded-md shadow-sm focus:outline-none focus:ring-[#B065FF] focus:border-[#B065FF] sm:text-sm"
                 placeholder={`Member ${index + 1}`}

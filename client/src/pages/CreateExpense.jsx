@@ -105,7 +105,7 @@ const CreateExpense = () => {
     setIsSubmitted(true);
     
     const hasInvalidUserAmount = usersData.some(userData => userData.isParticipant && userData.amount <= 0);
-    if (paidBy == -1 || amount <= 0 || expenseTitle == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || isAdvancedSplit && hasInvalidUserAmount){
+    if (paidBy == -1 || amount <= 0 || expenseTitle.trim() == "" || expenseTitle.length > 255 || !isAnyParticipantChecked || isAdvancedSplit && hasInvalidUserAmount){
       window.scroll(0, 0);
       return;
     } 
@@ -179,7 +179,7 @@ const CreateExpense = () => {
           <div className="flex space-x-4">
           <label
             className={`block text-sm font-medium ${
-              isSubmitted && expenseTitle == "" || expenseTitle.length > 255 ? "text-red-500" : "text-white"
+              isSubmitted && expenseTitle.trim() == "" || expenseTitle.length > 255 ? "text-red-500" : "text-white"
             } w-1/2`}
           >
             Expense Title {expenseTitle.length > 255 && " (max 255 characters)"}
@@ -191,7 +191,7 @@ const CreateExpense = () => {
               }}
               placeholder="Sunday night dinner"
               className={`mt-1 block w-full px-3 py-2 border ${
-                isSubmitted && expenseTitle == "" || expenseTitle.length > 255 ? "border-red-500" : "border-gray-700"
+                isSubmitted && expenseTitle.trim() == "" || expenseTitle.length > 255 ? "border-red-500" : "border-gray-700"
               } rounded-md text-white bg-black focus:outline-none focus:ring-primary-100 focus:border-primary-100`}
               required
             />

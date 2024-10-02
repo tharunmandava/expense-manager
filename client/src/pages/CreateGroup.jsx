@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 const CreateGroup = () => {
   const [name, setName] = useState("");
@@ -29,6 +30,7 @@ const CreateGroup = () => {
   };
 
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
     
     if(isLoading) return;
@@ -71,6 +73,7 @@ const CreateGroup = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen py-4">
+    {isLoading && <LoadingOverlay />}
       {/* Green Section */}
       <div className=" border-0 bg-gray-800  rounded-lg p-6 mb-4 max-w-3xl w-full">
         <h2 className="text-2xl font-bold mb-4 text-white">
