@@ -36,23 +36,4 @@ CREATE TABLE expense_participants (
 );
 
 
-/* SELECT
-    gm.user_id,
-    gm.user_name,
-    COALESCE(SUM(ep.amount), 0) AS total_amount
-FROM
-    group_members gm
-LEFT JOIN
-    expense_participants ep
-ON
-    gm.user_id = ep.user_id
-WHERE
-    gm.group_id =  
-GROUP BY
-    gm.user_id, gm.user_name
-ORDER BY
-    gm.user_name;
-
-set server and client encoding to utf-8
-
 

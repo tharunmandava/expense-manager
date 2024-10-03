@@ -102,12 +102,12 @@ router.delete("/:id", async (req, res) => {
 
 //create an expense
 router.post("/", async (req, res) => {
-  const { title, amount, paid_by, group_id, description, participantAmounts } =
+  const { title, amount, paid_by, group_id, description, participantAmounts,split } =
     req.body;
 
   try {
     await pool.query("BEGIN");
-    const createExpenseQuery = `INSERT INTO expenses(title,paid_by,amount,description,group_id) VALUES ($1,$2,$3,$4,$5) RETURNING expense_id`;
+    const createExpenseQuery = `INSERT INTO expenses(title,paid_by,amount,description,group_id,split) VALUES ($1,$2,$3,$4,$5,$6) RETURNING expense_id`;
 
     const { rows } = await pool.query(createExpenseQuery, [
       title,
@@ -115,6 +115,7 @@ router.post("/", async (req, res) => {
       amount,
       description,
       group_id,
+      split,
     ]);
     const expense_id = rows[0].expense_id;
 
@@ -144,7 +145,7 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { title, amount, description, paid_by, group_id, participantAmounts } =
+  const { title, amount, description, paid_by, group_id, participantAmounts,split } =
     req.body;
 
   const client = await pool.connect();
@@ -159,13 +160,14 @@ router.put("/:id", async (req, res) => {
       return res.status(404).json({ message: "Group ID invalid" });
     }
 
-    const expenseUpdateQuery = `UPDATE expenses SET title = $1, paid_by = $2, amount = $3, description = $4, group_id = $5 WHERE expense_id = $6 RETURNING *`;
+    const expenseUpdateQuery = `UPDATE expenses SET title = $1, paid_by = $2, amount = $3, description = $4, group_id = $5,split = $6 WHERE expense_id = $7 RETURNING *`;
     const result = await client.query(expenseUpdateQuery, [
       title,
       paid_by,
       amount,
       description,
       group_id,
+      split,
       id,
     ]);
 
