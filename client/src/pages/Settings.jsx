@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import ManageNavBar from '../components/ManageNavBar';
+import LoadingOverlay from "../components/LoadingOverlay";
 
 const Settings = () => {
   const [name, setName] = useState("");
@@ -128,6 +129,7 @@ const Settings = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screen py-4">
+      {isSubmitting && <LoadingOverlay />}
       <div className="w-full max-w-3xl">
         <ManageNavBar />
       </div>

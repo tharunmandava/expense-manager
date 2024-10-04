@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/inputfix.css";
 import ToggleSwitch from "../components/ToggleSwitch";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 const CreateExpense = () => {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -141,12 +142,11 @@ const CreateExpense = () => {
         paid_by: paidBy,
         group_id: id,
         participantAmounts: participantAmounts,
+        split: isAdvancedSplit
       });
 
       const response = await axios.get(`${API_URL}/expenses/by-group/${id}`);
       const expenseId = response.data[0].expense_id
-      
-      localStorage.setItem(expenseId, isAdvancedSplit);
 
       navigate(`/groups/${id}/expenses`);
     } catch (error) {
@@ -172,6 +172,7 @@ const CreateExpense = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screenpy-4 p-4">
+      {isLoading && <LoadingOverlay />}
       {/* Green Section - Form */}
       <div className="bg-gray-800 border border-gray-900 rounded-lg p-6 mb-4 max-w-3xl w-full">
         <h1 className="text-2xl font-bold mb-6 text-white">Create Expense</h1>
@@ -368,7 +369,7 @@ const CreateExpense = () => {
           onClick={handleSubmit}
           disabled={isLoading}
         >
-          {isLoading ? 'Adding Expense...' : 'Add Expense'}
+          Add Expense
         </button>
         <button
           type="button"

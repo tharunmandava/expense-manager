@@ -186,7 +186,7 @@ const CreateGroup = () => {
         onClick={handleSubmit}
         disabled={isLoading}
       >
-        {isLoading ? 'Creating Group...' : 'Create Group'}
+        Create Group
       </button>
     </div>
   );

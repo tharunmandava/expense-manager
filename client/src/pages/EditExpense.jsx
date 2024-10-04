@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "../styles/inputfix.css";
 import ToggleSwitch from "../components/ToggleSwitch";
+import LoadingOverlay from "../components/LoadingOverlay";
 
 const EditExpense = () => {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -13,7 +14,7 @@ const EditExpense = () => {
   const [amount, setAmount] = useState(0);
   const [paidBy, setPaidBy] = useState(-1);
   const [groupCurrency, setGroupCurrency] = useState("");
-  const [isAdvancedSplit, setIsAdvancedSplit] = useState(localStorage.getItem(`${expenseId}`) === 'true');
+  const [isAdvancedSplit, setIsAdvancedSplit] = useState(false);
   const [expenseTitle, setExpenseTitle] = useState("");
   const [expenseDescription, setExpenseDescription] = useState("");
   const [isAnyParticipantChecked, setIsAnyParticipantChecked] = useState(true);
@@ -23,12 +24,14 @@ const EditExpense = () => {
   useEffect(() => {
     const fetchExpenseDetails = async () => {
       try {
+
+        const exp = await axios.get(`${API_URL}/expenses/${expenseId}`);
+        const { expense, expense_participants } = exp.data;
+        setIsAdvancedSplit(expense.split);
+
         const response = await axios.get(`${API_URL}/groups/users/${id}`);
         const users = response.data;
         
-        const exp = await axios.get(`${API_URL}/expenses/${expenseId}`);
-        const { expense, expense_participants } = exp.data;
-  
         setPaidBy(expense.paid_by);
         setAmount(expense.amount);
         setExpenseTitle(expense.title);
@@ -56,7 +59,7 @@ const EditExpense = () => {
     };
   
     fetchExpenseDetails();
-  }, [expenseId]);
+  }, [expenseId, id]);
   
 
 
@@ -181,6 +184,7 @@ const EditExpense = () => {
         paid_by: paidBy,
         group_id: id,
         participantAmounts: participantAmounts,
+        split: isAdvancedSplit
       });
       navigate(`/groups/${id}/expenses`);
     } catch (error) {
@@ -206,6 +210,7 @@ const EditExpense = () => {
 
   return (
     <div className="flex flex-col items-center min-h-screenpy-4 p-4">
+    {isLoading && <LoadingOverlay />}
       {/* Green Section - Form */}
       <div className="bg-gray-800 border border-gray-900 rounded-lg p-6 mb-4 max-w-3xl w-full">
         <h1 className="text-2xl font-bold mb-6 text-white">Edit Expense</h1>
