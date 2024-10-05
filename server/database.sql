@@ -3,6 +3,7 @@ CREATE TABLE groups (
     group_name VARCHAR(255) NOT NULL,
     group_currency VARCHAR(5), 
     group_description TEXT,
+    split BOOLEAN NOT NULL DEFAULT FALSE, 
     last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -34,6 +35,3 @@ CREATE TABLE expense_participants (
     FOREIGN KEY (expense_id) REFERENCES expenses(expense_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES group_members(user_id) ON DELETE CASCADE
 );
-
-
-
