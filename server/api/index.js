@@ -5,7 +5,7 @@ const app = express();
 const pool = require("./db");
 const cors = require('cors')
 const corsOptions = {
-    origin: "process.env.CORS_ORIGIN",
+    origin: "*",
     methods: ['GET', 'POST', 'DELETE', 'PUT'],
     allowedHeaders: ["Content-Type", "Authorization"]
 };
