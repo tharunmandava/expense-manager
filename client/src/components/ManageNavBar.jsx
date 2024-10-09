@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useParams } from "react-router-dom";
 import { FaCheckCircle, FaCopy } from "react-icons/fa";
-import { PiShareFatLight } from "react-icons/pi";
+import CopyIcon from '../assets/images/copy-icon.svg';
 import axios from "axios";
 import ClipboardJS from 'clipboard';
 
@@ -10,11 +10,9 @@ const groupNameCache = {};
 
 const ManageNavBar = () => {
   const { id } = useParams();
-  const [showDropdown, setShowDropdown] = useState(false);
   const [groupName, setGroupName] = useState("");
   const [copied, setCopied] = useState(false);
   const API_URL = import.meta.env.VITE_API_URL;
-  const dropdownRef = useRef(null);
 
   const linkClass = ({ isActive }) =>
     isActive
@@ -44,9 +42,6 @@ const ManageNavBar = () => {
     }
   }, [id, API_URL]);
 
-  const handleShareClick = () => {
-    setShowDropdown(!showDropdown);
-  };
 
   const handleCopyClick = () => {
     setCopied(true);
@@ -68,27 +63,27 @@ const ManageNavBar = () => {
     return () => clipboard.destroy();
   }, []);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowDropdown(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
   return (
-    <div className="relative pb-4">
-      {groupName && (
-        <h2 className="text-xl sm:text-2xl font-bold mb-4 text-white">
-          {groupName}
-        </h2>
-      )}
+      <div className="relative pb-4">
+        {groupName && (
+        <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-white">
+              {groupName}
+            </h2>
+            <button
+                onClick={handleCopyClick}
+                data-clipboard-text={window.location.href.substring(0, window.location.href.lastIndexOf('/'))}
+                className="flex justify-center items-center text-white rounded-md mt-3 hover:bg-materialblack-300 p-2"
+              >
+                {copied ? <FaCheckCircle className="pr-1 text-green-500 w-5 h-5" /> : <div className="w-5 h-5"><img src={CopyIcon} className="w-4 h-4"/></div>}
+                <div className="text-xxs pb-1">{copied ? 'Copied!' : 'Group URL'}</div>
+              </button>
+        </div>
+        
+          
+        )}
 
+      
       <div className="flex items-center justify-between flex-nowrap">
         <nav className={`bg-gray-800 p-4 rounded-md shadow-lg flex flex-row items-center justify-between flex-nowrap`}>
           <ul className="flex flex-row gap-4 sm:gap-8">
@@ -110,10 +105,10 @@ const ManageNavBar = () => {
             </li>
             <li>
               <NavLink
-                to={`/groups/${id}/more`}
+                to={`/groups/${id}/total`}
                 className={linkClass}
               >
-                More
+                Total
               </NavLink>
             </li>
             <li>
@@ -127,34 +122,7 @@ const ManageNavBar = () => {
           </ul>
         </nav>
 
-        <div className="relative">
-          <button
-            onClick={handleShareClick}
-            className={`bg-gray-700 text-white rounded-md p-4 shadow-lg flex items-center justify-center w-12 h-12`}
-          >
-            <PiShareFatLight />
-          </button>
-
-          {showDropdown && (
-            <div ref={dropdownRef} className="absolute right-0 mt-2 w-64 bg-black shadow-lg rounded-lg p-4 z-10">
-              <input
-                id="url_text"
-                type="text"
-                value={window.location.href}
-                readOnly
-                className="w-full p-2 border border-gray-300 rounded-md mb-2 text-black"
-              />
-              <button
-                onClick={handleCopyClick}
-                data-clipboard-target="#url_text"
-                className="copy-btn w-full flex items-center justify-center bg-primary-200 text-white rounded-md p-2"
-              >
-                {copied ? <FaCheckCircle className="mr-2 text-green-500" /> : <FaCopy className="mr-2" />}
-                {copied ? 'Copied!' : 'Copy URL'}
-              </button>
-            </div>
-          )}
-        </div>
+       
       </div>
     </div>
   );

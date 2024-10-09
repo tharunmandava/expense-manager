@@ -8,7 +8,7 @@ import MainLayout from "./layouts/MainLayout";
 import HomePage from "./pages/HomePage";
 import Expenses from "./pages/Expenses";
 import Balances from "./pages/Balances";
-import More from "./pages/More";
+import Total from "./pages/Total";
 import EditExpense from "./pages/EditExpense";
 import CreateExpense from "./pages/CreateExpense";
 import CreateGroup from "./pages/CreateGroup";
@@ -35,7 +35,7 @@ function App() {
           <Route path="expenses/add" element={<CreateExpense />} />
           <Route path="expenses/:expenseId/edit" element={<EditExpense />} />
           <Route path="balances" element={<Balances />} />
-          <Route path="more" element={<More />} />
+          <Route path="total" element={<Total />} />
           <Route path="settings" element={<Settings />} />
         </Route>
       </Route>,

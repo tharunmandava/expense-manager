@@ -28,7 +28,7 @@ const Balances = () => {
     <div className="min-h-screen p-4">
     <div className="flex flex-col items-center">
       {/* Wrapper for aligning group name and ManageNavBar */}
-      <div className="w-full max-w-3xl">
+      <div className="flex flex-none w-full max-w-3xl">
         <ManageNavBar />
       </div>
         {/* Green Section - Balances */}
