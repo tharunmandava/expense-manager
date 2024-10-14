@@ -73,7 +73,7 @@ const ManageNavBar = () => {
             <button
                 onClick={handleCopyClick}
                 data-clipboard-text={window.location.href.substring(0, window.location.href.lastIndexOf('/'))}
-                className="flex justify-center items-center text-white rounded-md mt-3 hover:bg-materialblack-300 p-2"
+                className="copy-btn flex justify-center items-center text-white rounded-md mt-3 hover:bg-materialblack-300 p-2"
               >
                 {copied ? <FaCheckCircle className="pr-1 text-green-500 w-5 h-5" /> : <div className="w-5 h-5"><img src={CopyIcon} className="w-4 h-4"/></div>}
                 <div className="text-xxs pb-1">{copied ? 'Copied!' : 'Group URL'}</div>
@@ -85,8 +85,8 @@ const ManageNavBar = () => {
 
       
       <div className="flex items-center justify-between flex-nowrap">
-        <nav className={`bg-gray-800 p-4 rounded-md shadow-lg flex flex-row items-center justify-between flex-nowrap`}>
-          <ul className="flex flex-row gap-4 sm:gap-8">
+        <nav className="bg-gray-800 p-4 rounded-md shadow-lg flex flex-row items-center justify-between flex-nowrap">
+          <ul className="flex flex-row sm:gap-6 text-xs sm:text-base">
             <li>
               <NavLink
                 to={`/groups/${id}/expenses`}
