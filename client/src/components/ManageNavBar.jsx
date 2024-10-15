@@ -16,8 +16,8 @@ const ManageNavBar = () => {
 
   const linkClass = ({ isActive }) =>
     isActive
-      ? "text-white bg-black bg-opacity-20 rounded-md px-3 py-2"
-      : "text-[#B065FF] hover:text-gray-200 rounded-md px-3 py-2";
+      ? "text-white bg-black bg-opacity-20 rounded-md px-2 py-2"
+      : "text-[#B065FF] hover:text-gray-200 rounded-md px-2 py-2";
 
   useEffect(() => {
     const fetchGroupName = async () => {
@@ -64,7 +64,7 @@ const ManageNavBar = () => {
   }, []);
 
   return (
-      <div className="relative pb-4">
+      <div className="mb-4">
         {groupName && (
         <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl sm:text-2xl font-bold text-white">
@@ -84,46 +84,34 @@ const ManageNavBar = () => {
         )}
 
       
-      <div className="flex items-center justify-between flex-nowrap">
-        <nav className="bg-gray-800 p-4 rounded-md shadow-lg flex flex-row items-center justify-between flex-nowrap">
-          <ul className="flex flex-row sm:gap-6 text-xs sm:text-base">
-            <li>
-              <NavLink
-                to={`/groups/${id}/expenses`}
-                className={linkClass}
-              >
-                Expenses
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to={`/groups/${id}/balances`}
-                className={linkClass}
-              >
-                Balances
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to={`/groups/${id}/total`}
-                className={linkClass}
-              >
-                Total
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to={`/groups/${id}/settings`}
-                className={linkClass}
-              >
-                Settings
-              </NavLink>
-            </li>
-          </ul>
-        </nav>
+<nav className="bg-gray-800 p-4 rounded-md shadow-lg flex items-center justify-between">
+  <ul className="flex flex-row gap-0 text-sm justify-center">
+    <li>
+      <NavLink to={`/groups/${id}/expenses`} className={linkClass}>
+        Expenses
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to={`/groups/${id}/balances`} className={linkClass}>
+        Balances
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to={`/groups/${id}/total`} className={linkClass}>
+        Total
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to={`/groups/${id}/settings`} className={linkClass}>
+        Settings
+      </NavLink>
+    </li>
+  </ul>
+</nav>
+
 
        
-      </div>
+      
     </div>
   );
 };
