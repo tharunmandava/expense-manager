@@ -87,6 +87,18 @@ Uses node-postgres under the hood to connect to the database.
 ]
 ```
 
+### Create group members
+
+#### request body
+
+```json
+{
+       "members" : ["jonny doe","jack doe"]
+
+}
+
+```
+
 ### Get balances of a group
 `GET /api/groups/balances/:id`
 

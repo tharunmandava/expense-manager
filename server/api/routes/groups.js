@@ -164,5 +164,30 @@ router.put('/:id', async (req,res) => {
     };
 });
 
+router.post('/users/:id', async (req,res) =>{
+    const {id} = req.params;
+    const {users} = req.body;
+    
+    if (!Array.isArray(users) || users.length === 0) {
+        return res.status(400).json({ message: "Members array is required and should not be empty" });
+    }
+
+    try{
+        await pool.query("BEGIN");
+        const createGroupMembers = `INSERT INTO group_members(group_id,user_name) VALUES ($1,$2);`
+
+        for(const user of users){
+            await pool.query(createGroupMembers,[id,user]);
+        }
+        await pool.query("COMMIT");
+        res.status(201).json({message: "members added!"});
+    }
+    catch(e){
+        await pool.query("ROLLBACK");
+        console.log('error occured',e);
+        res.status(500).json({Message: "could not create new member in group", error : e});
+    }
+})
+
 
 module.exports = router;
